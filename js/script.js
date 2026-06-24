@@ -2,6 +2,7 @@
 // DATA
 // ============================================
 
+// Data Jadwal Harian
 let jadwalData = [
     { id: 1, kegiatan: 'Rapat Koordinasi', waktu: '08:00 - 09:30', ruangan: 'R. Meeting 1', tempat: 'Gedung A Lantai 2', pic: 'Budi' },
     { id: 2, kegiatan: 'Workshop UI/UX', waktu: '10:00 - 12:00', ruangan: 'Lab. Komputer', tempat: 'Gedung B Lantai 3', pic: 'Siti' },
@@ -12,8 +13,10 @@ let jadwalData = [
     { id: 7, kegiatan: 'Meeting Client', waktu: '13:30 - 15:00', ruangan: 'R. VIP', tempat: 'Gedung C Lantai 2', pic: 'Dewi' },
 ];
 
+// Data Kegiatan untuk Kalender
 const eventDates = [3, 7, 10, 12, 15, 18, 22, 25, 28, 30];
 
+// Data Grafik
 const monthlyData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
     values: [120, 150, 180, 170, 200, 220, 190, 210, 240, 260, 230, 280],
@@ -31,30 +34,7 @@ const kategoriData = {
 };
 
 // ============================================
-// SIDEBAR TOGGLE
-// ============================================
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const hamburger = document.getElementById('hamburgerBtn');
-
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
-    hamburger.classList.toggle('active');
-}
-
-function closeSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const hamburger = document.getElementById('hamburgerBtn');
-
-    sidebar.classList.remove('open');
-    overlay.classList.remove('active');
-    hamburger.classList.remove('active');
-}
-
-// ============================================
-// NAVIGASI
+// NAVIGASI SIDEBAR
 // ============================================
 const pageTitles = {
     dashboard: { title: 'Dashboard', subtitle: 'Selamat datang, Admin 👋' },
@@ -84,12 +64,7 @@ document.querySelectorAll('.menu a').forEach(link => {
         document.getElementById('pageTitle').textContent = titleData.title;
         document.getElementById('pageSubtitle').textContent = titleData.subtitle;
 
-        // Tutup sidebar di HP
-        if (window.innerWidth <= 768) {
-            closeSidebar();
-        }
-
-        // Refresh halaman
+        // Refresh halaman tertentu
         if (page === 'capaian') {
             setTimeout(() => {
                 initBarChartFull(currentPeriodFull || 'monthly');
@@ -97,12 +72,15 @@ document.querySelectorAll('.menu a').forEach(link => {
                 renderCapaianTable();
             }, 100);
         }
+
         if (page === 'kalender') {
             renderCalendarFull(currentMonthFull || new Date().getMonth(), currentYearFull || new Date().getFullYear());
         }
+
         if (page === 'jadwal') {
             renderJadwalFull();
         }
+
         if (page === 'laporan') {
             setTimeout(() => {
                 generateLaporan();
@@ -112,7 +90,7 @@ document.querySelectorAll('.menu a').forEach(link => {
 });
 
 // ============================================
-// TAMBAH / HAPUS JADWAL
+// TAMBAH JADWAL
 // ============================================
 function tambahJadwal() {
     const kegiatan = prompt('Masukkan nama kegiatan:');
@@ -135,6 +113,9 @@ function tambahJadwal() {
     alert('✅ Jadwal berhasil ditambahkan!');
 }
 
+// ============================================
+// HAPUS JADWAL
+// ============================================
 function hapusJadwal(id) {
     if (confirm('Yakin ingin menghapus jadwal ini?')) {
         jadwalData = jadwalData.filter(j => j.id !== id);
@@ -146,7 +127,7 @@ function hapusJadwal(id) {
 }
 
 // ============================================
-// RENDER JADWAL
+// RENDER JADWAL (Dashboard)
 // ============================================
 function renderJadwal() {
     const tbody = document.getElementById('jadwalTableBody');
@@ -162,6 +143,9 @@ function renderJadwal() {
     `).join('');
 }
 
+// ============================================
+// RENDER JADWAL FULL (Halaman Jadwal)
+// ============================================
 function renderJadwalFull() {
     const tbody = document.getElementById('jadwalFullTable');
     tbody.innerHTML = jadwalData.map(item => `
@@ -197,7 +181,7 @@ function printJadwal() {
 }
 
 // ============================================
-// KALENDER
+// KALENDER (Dashboard)
 // ============================================
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
@@ -249,7 +233,7 @@ document.getElementById('nextMonth').addEventListener('click', () => {
 });
 
 // ============================================
-// KALENDER FULL
+// KALENDER FULL (Halaman Kalender)
 // ============================================
 let currentMonthFull = new Date().getMonth();
 let currentYearFull = new Date().getFullYear();
@@ -285,7 +269,9 @@ function renderCalendarFull(month, year) {
 
 function showEventDetail(tanggal, bulan) {
     const container = document.getElementById('eventListFull');
-    const kegiatan = jadwalData.filter(j => eventDates.includes(tanggal));
+    const kegiatan = jadwalData.filter(j => {
+        return eventDates.includes(tanggal);
+    });
 
     if (kegiatan.length > 0) {
         container.innerHTML = kegiatan.map(k => `
@@ -321,10 +307,6 @@ function updateStats() {
     document.getElementById('totalPic').textContent = picSet.size;
     const bulanIni = new Date().getMonth();
     document.getElementById('totalPengunjung').textContent = monthlyData.values[bulanIni] || 0;
-
-    const now = new Date();
-    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    document.getElementById('hariIni').textContent = now.toLocaleDateString('id-ID', options);
 }
 
 // ============================================
@@ -369,7 +351,7 @@ function initBarChart(period) {
 }
 
 // ============================================
-// GRAFIK BATANG FULL (Capaian)
+// GRAFIK BATANG FULL (Halaman Capaian)
 // ============================================
 let barChartFullInstance = null;
 let currentPeriodFull = 'monthly';
@@ -410,7 +392,7 @@ function initBarChartFull(period) {
 }
 
 // ============================================
-// FILTER BUTTON
+// FILTER BUTTON (Dashboard & Capaian)
 // ============================================
 document.querySelectorAll('#page-dashboard .filter-btn, #page-capaian .filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
@@ -432,7 +414,7 @@ document.querySelectorAll('#page-dashboard .filter-btn, #page-capaian .filter-bt
 });
 
 // ============================================
-// GRAFIK PIE
+// GRAFIK PIE (Dashboard)
 // ============================================
 let pieChartInstance = null;
 
@@ -461,6 +443,9 @@ function initPieChart() {
     });
 }
 
+// ============================================
+// GRAFIK PIE FULL (Halaman Capaian)
+// ============================================
 let pieChartFullInstance = null;
 
 function initPieChartFull() {
@@ -489,7 +474,7 @@ function initPieChartFull() {
 }
 
 // ============================================
-// TABEL CAPAIAN
+// TABEL CAPAIAN (Halaman Capaian)
 // ============================================
 function renderCapaianTable() {
     const tbody = document.getElementById('capaianTableBody');
@@ -525,12 +510,16 @@ function renderCapaianTable() {
 }
 
 // ============================================
-// HALAMAN LAPORAN
+// ===== HALAMAN LAPORAN =====
 // ============================================
+
 let barChartLaporanInstance = null;
 let pieChartLaporanInstance = null;
 let currentLaporanPeriod = 'monthly';
 
+// ============================================
+// TOGGLE DATE RANGE
+// ============================================
 function toggleDateRange() {
     const periode = document.getElementById('laporanPeriode').value;
     const dateRange = document.getElementById('dateRangeGroup');
@@ -544,6 +533,9 @@ function toggleDateRange() {
     }
 }
 
+// ============================================
+// GENERATE LAPORAN
+// ============================================
 function generateLaporan() {
     const jenis = document.getElementById('laporanJenis').value;
     const periode = document.getElementById('laporanPeriode').value;
@@ -551,6 +543,7 @@ function generateLaporan() {
     let dataJadwal = [...jadwalData];
     let dataCapaian = [...monthlyData.values];
 
+    // Update statistik
     document.getElementById('lapTotalKegiatan').textContent = dataJadwal.length;
     const picSet = new Set(dataJadwal.map(item => item.pic));
     document.getElementById('lapTotalPic').textContent = picSet.size;
@@ -558,6 +551,7 @@ function generateLaporan() {
     const totalPengunjung = dataCapaian.reduce((a, b) => a + b, 0);
     document.getElementById('lapTotalPengunjung').textContent = totalPengunjung;
 
+    // Periode laporan
     const bulanNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     let periodeText = '';
     const now = new Date();
@@ -594,7 +588,10 @@ function generateLaporan() {
     const jenisText = document.getElementById('laporanJenis').options[document.getElementById('laporanJenis').selectedIndex].text;
     document.getElementById('lapJenisLaporan').textContent = jenisText;
 
+    // Render tabel
     renderLaporanTable(dataJadwal, jenis);
+
+    // Update grafik
     initBarChartLaporan(currentLaporanPeriod);
     initPieChartLaporan();
 
@@ -604,6 +601,9 @@ function generateLaporan() {
     document.getElementById('lapStatus').style.color = '#fff';
 }
 
+// ============================================
+// RENDER TABEL LAPORAN
+// ============================================
 function renderLaporanTable(data, jenis) {
     const tbody = document.getElementById('laporanTableBody');
     const thead = document.getElementById('laporanThead');
@@ -651,7 +651,7 @@ function renderLaporanTable(data, jenis) {
     thead.innerHTML = headerHtml;
 
     if (rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center;color:#888;padding:40px;">📂 Tidak ada data</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center;color:#888;padding:40px;">📂 Tidak ada data untuk periode ini</td></tr>`;
         return;
     }
 
@@ -671,9 +671,14 @@ function renderLaporanTable(data, jenis) {
     tbody.innerHTML = bodyHtml;
 }
 
+// ============================================
+// GRAFIK LAPORAN - BAR
+// ============================================
 function initBarChartLaporan(period) {
     const ctx = document.getElementById('barChartLaporan').getContext('2d');
-    if (barChartLaporanInstance) barChartLaporanInstance.destroy();
+    if (barChartLaporanInstance) {
+        barChartLaporanInstance.destroy();
+    }
 
     const data = period === 'monthly' ? monthlyData : yearlyData;
     const label = period === 'monthly' ? 'Jumlah Pengunjung per Bulan' : 'Jumlah Pengunjung per Tahun';
@@ -696,19 +701,40 @@ function initBarChartLaporan(period) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: true, position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 13 } } }
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 16,
+                        font: { size: 13 }
+                    }
+                }
             },
             scales: {
-                y: { beginAtZero: true, grid: { color: '#eee' }, ticks: { font: { size: 12 } } },
-                x: { grid: { display: false }, ticks: { font: { size: 12 } } }
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#eee' },
+                    ticks: { font: { size: 12 } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 12 } }
+                }
             }
         }
     });
 }
 
+// ============================================
+// GRAFIK LAPORAN - PIE
+// ============================================
 function initPieChartLaporan() {
     const ctx = document.getElementById('pieChartLaporan').getContext('2d');
-    if (pieChartLaporanInstance) pieChartLaporanInstance.destroy();
+    if (pieChartLaporanInstance) {
+        pieChartLaporanInstance.destroy();
+    }
 
     pieChartLaporanInstance = new Chart(ctx, {
         type: 'pie',
@@ -725,12 +751,23 @@ function initPieChartLaporan() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 13 } } }
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { size: 13 }
+                    }
+                }
             }
         }
     });
 }
 
+// ============================================
+// UBAH GRAFIK LAPORAN
+// ============================================
 function ubahGrafikLaporan(period) {
     currentLaporanPeriod = period;
     document.querySelectorAll('#page-laporan .filter-btn').forEach(btn => {
@@ -743,28 +780,39 @@ function ubahGrafikLaporan(period) {
 }
 
 // ============================================
-// EXPORT
+// EXPORT FUNCTIONS
 // ============================================
+
 function exportPDF() {
-    alert('📄 Download PDF\n\nGunakan tombol "Cetak" dan pilih "Save as PDF"');
+    alert('📄 Download PDF\n\nFitur ini akan mengexport laporan ke format PDF.\nUntuk demo, gunakan tombol "Cetak" dan pilih "Save as PDF".');
 }
 
 function exportExcel() {
+    // Ambil data tabel
     const table = document.getElementById('laporanTable');
     let csv = '';
+
+    // Header
     const headers = document.querySelectorAll('#laporanThead th');
-    headers.forEach(th => { csv += th.textContent + ','; });
+    headers.forEach(th => {
+        csv += th.textContent + ',';
+    });
     csv += '\n';
+
+    // Data
     const rows = document.querySelectorAll('#laporanTableBody tr');
     rows.forEach(row => {
         const cells = row.querySelectorAll('td');
         cells.forEach(cell => {
             let text = cell.textContent.trim();
+            // Hilangkan emoji
             text = text.replace(/[^\w\s,.]/g, '').trim();
             csv += '"' + text + '",';
         });
         csv += '\n';
     });
+
+    // Download CSV
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -777,11 +825,13 @@ function exportExcel() {
 
 function printLaporan() {
     generateLaporan();
-    setTimeout(() => { window.print(); }, 300);
+    setTimeout(() => {
+        window.print();
+    }, 300);
 }
 
 function exportWord() {
-    alert('📝 Download Word\n\nCopy data dari tabel dan paste ke Word.');
+    alert('📝 Download Word\n\nFitur ini akan mengexport laporan ke format Word.\nUntuk demo, copy data dari tabel dan paste ke Word.');
 }
 
 // ============================================
@@ -794,7 +844,7 @@ function setCurrentDate() {
 }
 
 // ============================================
-// INIT
+// INIT SEMUA
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     renderJadwal();
@@ -809,27 +859,37 @@ document.addEventListener('DOMContentLoaded', function() {
     initPieChartFull();
     renderCapaianTable();
     generateLaporan();
+});
 
-    // Sidebar awal di HP tertutup
+// ============================================
+// TOGGLE SIDEBAR UNTUK HP
+// ============================================
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar.style.transform === 'translateX(0px)') {
+        sidebar.style.transform = 'translateX(-100%)';
+    } else {
+        sidebar.style.transform = 'translateX(0px)';
+    }
+}
+
+// Tutup sidebar saat klik di luar (HP)
+document.addEventListener('click', function(e) {
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.sidebar-toggle');
     if (window.innerWidth <= 768) {
-        document.getElementById('sidebar').style.transform = 'translateX(-100%)';
+        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+            sidebar.style.transform = 'translateX(-100%)';
+        }
     }
 });
 
-// Reset sidebar saat resize
+// Reset sidebar saat resize ke desktop
 window.addEventListener('resize', function() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const hamburger = document.getElementById('hamburgerBtn');
-
+    const sidebar = document.querySelector('.sidebar');
     if (window.innerWidth > 768) {
-        sidebar.classList.remove('open');
-        sidebar.style.transform = '';
-        overlay.classList.remove('active');
-        hamburger.classList.remove('active');
+        sidebar.style.transform = 'translateX(0px)';
     } else {
-        if (!sidebar.classList.contains('open')) {
-            sidebar.style.transform = 'translateX(-100%)';
-        }
+        sidebar.style.transform = 'translateX(-100%)';
     }
 });
