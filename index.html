@@ -10,14 +10,12 @@
 </head>
 <body>
 
-    <!-- ===== HEADER (dengan Hamburger Menu) ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="header-top">
         <div class="header-container">
             <div class="header-left">
                 <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                 </button>
                 <div class="header-logo">
                     <span class="logo-icon">📊</span>
@@ -26,7 +24,6 @@
             </div>
             <div class="header-right">
                 <span class="date" id="currentDate"></span>
-                <div class="avatar">A</div>
             </div>
         </div>
     </header>
@@ -37,34 +34,26 @@
             <div class="logo">📊 <span>Dash</span>board</div>
             <div class="sub-logo">Sistem Penjadwalan</div>
         </div>
-
         <nav class="menu">
             <a href="#" class="active" data-page="dashboard">
-                <span class="icon">🏠</span>
-                <span class="text">Beranda</span>
+                <span class="icon">🏠</span><span class="text">Beranda</span>
             </a>
             <a href="#" data-page="jadwal">
-                <span class="icon">📋</span>
-                <span class="text">Jadwal Harian</span>
+                <span class="icon">📋</span><span class="text">Jadwal Harian</span>
             </a>
             <a href="#" data-page="kalender">
-                <span class="icon">📅</span>
-                <span class="text">Kalender</span>
+                <span class="icon">📅</span><span class="text">Kalender</span>
             </a>
             <a href="#" data-page="capaian">
-                <span class="icon">📈</span>
-                <span class="text">Capaian</span>
+                <span class="icon">📈</span><span class="text">Capaian</span>
             </a>
             <a href="#" data-page="laporan">
-                <span class="icon">📁</span>
-                <span class="text">Laporan</span>
+                <span class="icon">📁</span><span class="text">Laporan</span>
             </a>
             <a href="#" data-page="pengaturan">
-                <span class="icon">⚙️</span>
-                <span class="text">Pengaturan</span>
+                <span class="icon">⚙️</span><span class="text">Pengaturan</span>
             </a>
         </nav>
-
         <div class="sidebar-footer">
             <p>© 2026 Dashboard</p>
             <p style="font-size:11px;color:#9fa8da;">v2.0</p>
@@ -75,7 +64,7 @@
     <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
     <!-- ===== MAIN CONTENT ===== -->
-    <main class="main-content" id="mainContent">
+    <main class="main-content">
 
         <!-- SUB HEADER -->
         <div class="sub-header">
@@ -89,6 +78,7 @@
         <!-- HALAMAN: DASHBOARD -->
         <!-- ========================================== -->
         <div id="page-dashboard" class="page-content active">
+            <!-- STATISTIK -->
             <section class="stats">
                 <div class="stat-card">
                     <div class="stat-icon">📋</div>
@@ -120,7 +110,8 @@
                 </div>
             </section>
 
-            <section class="row-2">
+            <!-- ===== BARIS 1: JADWAL HARIAN (Full Width) ===== -->
+            <section class="row-full">
                 <div class="card table-card">
                     <div class="card-header">
                         <h3>📋 Jadwal Harian</h3>
@@ -135,7 +126,11 @@
                         </table>
                     </div>
                 </div>
+            </section>
 
+            <!-- ===== BARIS 2: KALENDER + DAFTAR KEGIATAN (2 Kolom) ===== -->
+            <section class="row-2">
+                <!-- Kalender -->
                 <div class="card calendar-card">
                     <div class="card-header">
                         <h3>📅 Kalender Kegiatan</h3>
@@ -148,11 +143,24 @@
                     <div class="calendar-grid" id="calendarGrid"></div>
                     <div class="calendar-legend">
                         <span><span class="dot" style="background:#1a237e;"></span> Ada Event</span>
+                        <span><span class="dot" style="background:#ff9800;"></span> Hari Ini</span>
                         <span><span class="dot" style="background:#e0e0e0;"></span> Kosong</span>
+                    </div>
+                </div>
+
+                <!-- DAFTAR KEGIATAN BULAN INI (READ ONLY) -->
+                <div class="card event-list-card">
+                    <div class="card-header">
+                        <h3>📌 Kegiatan Bulan Ini</h3>
+                        <span class="badge" id="eventCountBadge">0 Kegiatan</span>
+                    </div>
+                    <div id="dashboardEventList">
+                        <p style="color:#888;font-size:13px;text-align:center;padding:20px 0;">Loading...</p>
                     </div>
                 </div>
             </section>
 
+            <!-- GRAFIK -->
             <section class="row-3">
                 <div class="card chart-card">
                     <div class="card-header">
@@ -257,7 +265,7 @@
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Bulan</th><th>Jumlah Pengunjung</th><th>Target</th><th>Pencapaian</th><th>Status</th><th>Aksi</th></tr></thead>
+                        <thead><tr><th>No</th><th>Bulan</th><th>Jumlah</th><th>Target</th><th>Pencapaian</th><th>Status</th><th>Aksi</th></tr></thead>
                         <tbody id="capaianTableBody"></tbody>
                     </table>
                 </div>
