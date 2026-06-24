@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Penjadwalan & Capaian</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="logo">📊 <span>Dash</span>board</div>
+        <div class="sub-logo">Sistem Penjadwalan</div>
+
+        <nav class="menu">
+            <a href="#" class="active" data-page="dashboard">🏠 <span>Beranda</span></a>
+            <a href="#" data-page="jadwal">📋 <span>Jadwal Harian</span></a>
+            <a href="#" data-page="kalender">📅 <span>Kalender</span></a>
+            <a href="#" data-page="capaian">📈 <span>Capaian</span></a>
+            <a href="#" data-page="laporan">📁 <span>Laporan</span></a>
+            <a href="#" data-page="pengaturan">⚙️ <span>Pengaturan</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>© 2026 Dashboard</p>
+            <p style="font-size:11px;color:#9fa8da;">v2.0</p>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div>
+                <h1 id="pageTitle">Dashboard</h1>
+                <p id="pageSubtitle">Selamat datang, Admin 👋</p>
+            </div>
+            <div class="header-right">
+                <span class="date" id="currentDate"></span>
+                <div class="avatar">A</div>
+            </div>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- HALAMAN: DASHBOARD (Default) -->
+        <!-- ========================================== -->
+        <div id="page-dashboard" class="page-content active">
+
+            <!-- STATISTIK CARDS -->
+            <section class="stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <div>
+                        <p class="stat-label">Total Kegiatan</p>
+                        <p class="stat-value" id="totalKegiatan">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div>
+                        <p class="stat-label">Total PIC</p>
+                        <p class="stat-value" id="totalPic">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div>
+                        <p class="stat-label">Pengunjung Bulan Ini</p>
+                        <p class="stat-value" id="totalPengunjung">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- JADWAL HARIAN + KALENDER -->
+            <section class="row-2">
+                <div class="card table-card">
+                    <div class="card-header">
+                        <h3>📋 Jadwal Harian</h3>
+                        <span class="badge">Hari Ini</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kegiatan</th>
+                                    <th>Waktu</th>
+                                    <th>Ruangan</th>
+                                    <th>Tempat</th>
+                                    <th>PIC</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jadwalTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card calendar-card">
+                    <div class="card-header">
+                        <h3>📅 Kalender Kegiatan</h3>
+                        <div class="calendar-nav">
+                            <button id="prevMonth">◀</button>
+                            <span id="monthYear"></span>
+                            <button id="nextMonth">▶</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                    <div class="calendar-legend">
+                        <span><span class="dot" style="background:#1a237e;"></span> Ada Kegiatan</span>
+                        <span><span class="dot" style="background:#e0e0e0;"></span> Kosong</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GRAFIK CAPAIAN -->
+            <section class="row-3">
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>📊 Capaian Pengunjung</h3>
+                        <div class="chart-filter">
+                            <button class="filter-btn active" data-period="monthly">Bulanan</button>
+                            <button class="filter-btn" data-period="yearly">Tahunan</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>🍩 Kategori Pengunjung</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- HALAMAN: JADWAL HARIAN -->
+        <!-- ========================================== -->
+        <div id="page-jadwal" class="page-content">
+            <div class="card" style="padding:24px;">
+                <div class="card-header">
+                    <h3>📋 Semua Jadwal Harian</h3>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button class="btn-print" onclick="printJadwal()">🖨️ Cetak</button>
+                        <button class="btn-add" onclick="tambahJadwal()">+ Tambah Jadwal</button>
+                    </div>
+                </div>
+                <div class="table-wrapper" id="jadwalPrintArea">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kegiatan</th>
+                                <th>Waktu</th>
+                                <th>Ruangan</th>
+                                <th>Tempat</th>
+                                <th>PIC</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jadwalFullTable"></tbody>
+                    </table>
+                </div>
+                <div id="printFooter" style="display:none;margin-top:20px;padding-top:16px;border-top:2px solid #ddd;text-align:center;font-size:12px;color:#888;">
+                    <p>Dicetak pada: <span id="printDate"></span></p>
+                    <p>Dokumen ini adalah berkas resmi dari Sistem Penjadwalan</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- HALAMAN: KALENDER -->
+        <!-- ========================================== -->
+        <div id="page-kalender" class="page-content">
+            <div class="card" style="padding:24px;">
+                <div class="card-header">
+                    <h3>📅 Kalender Kegiatan</h3>
+                    <div class="calendar-nav">
+                        <button id="prevMonthFull">◀</button>
+                        <span id="monthYearFull"></span>
+                        <button id="nextMonthFull">▶</button>
+                    </div>
+                </div>
+                <div class="calendar-grid-full" id="calendarGridFull"></div>
+                <div class="calendar-legend">
+                    <span><span class="dot" style="background:#1a237e;"></span> Ada Kegiatan</span>
+                    <span><span class="dot" style="background:#e0e0e0;"></span> Kosong</span>
+                </div>
+                <div style="margin-top:20px;padding:16px;background:#f8f9fc;border-radius:10px;">
+                    <h4 style="color:#1a237e;margin-bottom:10px;">📌 Daftar Kegiatan Bulan Ini</h4>
+                    <div id="eventListFull">
+                        <p style="color:#888;">Klik tanggal untuk melihat kegiatan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- HALAMAN: CAPAIAN -->
+        <!-- ========================================== -->
+        <div id="page-capaian" class="page-content">
+            <div class="row-3" style="margin-bottom:20px;">
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>📊 Capaian Pengunjung</h3>
+                        <div class="chart-filter">
+                            <button class="filter-btn active" data-period="monthly">Bulanan</button>
+                            <button class="filter-btn" data-period="yearly">Tahunan</button>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height:300px;">
+                        <canvas id="barChartFull"></canvas>
+                    </div>
+                </div>
+
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>🍩 Kategori Pengunjung</h3>
+                    </div>
+                    <div class="chart-container" style="height:300px;">
+                        <canvas id="pieChartFull"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>📋 Detail Capaian Pengunjung</h3>
+                    <span class="badge">Update Terbaru</span>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bulan</th>
+                                <th>Jumlah Pengunjung</th>
+                                <th>Target</th>
+                                <th>Pencapaian</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="capaianTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- HALAMAN: LAPORAN -->
+        <!-- ========================================== -->
+        <div id="page-laporan" class="page-content">
+
+            <!-- Filter Laporan -->
+            <div class="card" style="margin-bottom:20px;">
+                <div class="card-header">
+                    <h3>🔍 Filter Laporan</h3>
+                    <span class="badge">Generate Laporan</span>
+                </div>
+                <div class="filter-laporan">
+                    <div class="filter-group">
+                        <label>Jenis Laporan</label>
+                        <select id="laporanJenis">
+                            <option value="all">📋 Semua Data</option>
+                            <option value="jadwal">📋 Jadwal Harian</option>
+                            <option value="capaian">📊 Capaian Pengunjung</option>
+                            <option value="kalender">📅 Kalender Kegiatan</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Periode</label>
+                        <select id="laporanPeriode" onchange="toggleDateRange()">
+                            <option value="bulan_ini">Bulan Ini</option>
+                            <option value="bulan_lalu">Bulan Lalu</option>
+                            <option value="tahun_ini">Tahun Ini</option>
+                            <option value="custom">Custom Tanggal</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" id="dateRangeGroup" style="display:none;">
+                        <label>Dari</label>
+                        <input type="date" id="tglMulai" />
+                        <label style="margin-left:8px;">Sampai</label>
+                        <input type="date" id="tglSelesai" />
+                    </div>
+                    <div class="filter-group" style="justify-content:flex-end;">
+                        <button class="btn-filter" onclick="generateLaporan()">📊 Tampilkan</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistik Laporan -->
+            <div class="stats" id="laporanStats">
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <div>
+                        <p class="stat-label">Total Kegiatan</p>
+                        <p class="stat-value" id="lapTotalKegiatan">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div>
+                        <p class="stat-label">Total PIC</p>
+                        <p class="stat-value" id="lapTotalPic">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div>
+                        <p class="stat-label">Total Pengunjung</p>
+                        <p class="stat-value" id="lapTotalPengunjung">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div>
+                        <p class="stat-label">Periode Laporan</p>
+                        <p class="stat-value" id="lapPeriode" style="font-size:16px;">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grafik Laporan -->
+            <div class="row-3" style="margin-bottom:20px;">
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>📊 Grafik Capaian Pengunjung</h3>
+                        <div class="chart-filter">
+                            <button class="filter-btn active" data-period="monthly" onclick="ubahGrafikLaporan('monthly')">Bulanan</button>
+                            <button class="filter-btn" data-period="yearly" onclick="ubahGrafikLaporan('yearly')">Tahunan</button>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height:300px;">
+                        <canvas id="barChartLaporan"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>🍩 Kategori Pengunjung</h3>
+                    </div>
+                    <div class="chart-container" style="height:300px;">
+                        <canvas id="pieChartLaporan"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Laporan -->
+            <div class="card" style="margin-bottom:20px;" id="laporanCard">
+                <div class="card-header">
+                    <h3>📋 Data Laporan Lengkap</h3>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <span class="badge" id="lapJumlahData">0 Data</span>
+                        <span class="badge" style="background:#4caf50;color:#fff;" id="lapStatus">Siap</span>
+                    </div>
+                </div>
+                <div class="table-wrapper" id="laporanTableArea">
+                    <table id="laporanTable">
+                        <thead id="laporanThead">
+                            <tr>
+                                <th>No</th>
+                                <th>Kegiatan</th>
+                                <th>Waktu</th>
+                                <th>Ruangan</th>
+                                <th>Tempat</th>
+                                <th>PIC</th>
+                                <th>Pengunjung</th>
+                            </tr>
+                        </thead>
+                        <tbody id="laporanTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center;color:#888;padding:40px;">
+                                    📂 Pilih filter dan klik "Tampilkan Laporan" untuk melihat data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="laporanFooter" style="margin-top:16px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:12px;color:#888;flex-wrap:wrap;">
+                    <span>🕐 Dicetak: <span id="lapTanggalCetak"></span></span>
+                    <span>📌 <span id="lapJenisLaporan">Semua Data</span></span>
+                    <span>© Sistem Penjadwalan - Laporan Resmi</span>
+                </div>
+            </div>
+
+            <!-- Tombol Export -->
+            <div class="card" style="text-align:center;padding:24px;">
+                <h4 style="color:#1a237e;margin-bottom:16px;">📥 Export Laporan</h4>
+                <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+                    <button class="btn-export pdf" onclick="exportPDF()">📄 PDF</button>
+                    <button class="btn-export excel" onclick="exportExcel()">📊 Excel</button>
+                    <button class="btn-export print" onclick="printLaporan()">🖨️ Cetak</button>
+                    <button class="btn-export word" onclick="exportWord()">📝 Word</button>
+                </div>
+                <p style="margin-top:12px;color:#888;font-size:13px;">
+                    💡 Klik tombol di atas untuk mengekspor data laporan
+                </p>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- HALAMAN: PENGATURAN -->
+        <!-- ========================================== -->
+        <div id="page-pengaturan" class="page-content">
+            <div class="card" style="padding:30px;text-align:center;">
+                <div style="font-size:60px;margin-bottom:16px;">⚙️</div>
+                <h2 style="color:#1a237e;">Halaman Pengaturan</h2>
+                <p style="color:#888;margin:10px 0 20px;">Fitur pengaturan sedang dalam pengembangan</p>
+                <button class="btn-add" onclick="alert('Fitur pengaturan akan segera hadir!')">💾 Simpan Pengaturan</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
