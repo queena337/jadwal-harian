@@ -1,8 +1,59 @@
 // ============================================
-// DATA
+// DATA DENGAN LOCALSTORAGE
 // ============================================
 
-// Data Jadwal
+function simpanSemuaData() {
+    try {
+        localStorage.setItem('jadwalData', JSON.stringify(jadwalData));
+        localStorage.setItem('eventData', JSON.stringify(eventData));
+        localStorage.setItem('capaianData', JSON.stringify(capaianData));
+        localStorage.setItem('nextEventId', String(nextEventId));
+        localStorage.setItem('nextJadwalId', String(nextJadwalId));
+    } catch (e) {
+        console.log('Gagal menyimpan data:', e);
+    }
+}
+
+function muatSemuaData() {
+    try {
+        const savedJadwal = localStorage.getItem('jadwalData');
+        const savedEvent = localStorage.getItem('eventData');
+        const savedCapaian = localStorage.getItem('capaianData');
+        const savedNextEventId = localStorage.getItem('nextEventId');
+        const savedNextJadwalId = localStorage.getItem('nextJadwalId');
+
+        if (savedJadwal) {
+            const parsed = JSON.parse(savedJadwal);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                jadwalData = parsed;
+            }
+        }
+        if (savedEvent) {
+            const parsed = JSON.parse(savedEvent);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                eventData = parsed;
+            }
+        }
+        if (savedCapaian) {
+            const parsed = JSON.parse(savedCapaian);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                capaianData = parsed;
+            }
+        }
+        if (savedNextEventId) {
+            nextEventId = parseInt(savedNextEventId) || 11;
+        }
+        if (savedNextJadwalId) {
+            nextJadwalId = parseInt(savedNextJadwalId) || 8;
+        }
+    } catch (e) {
+        console.log('Gagal memuat data:', e);
+    }
+}
+
+// ============================================
+// DATA JADWAL
+// ============================================
 let jadwalData = [
     { id: 1, kegiatan: 'Rapat Koordinasi', waktu: '08:00 - 09:30', ruangan: 'R. Meeting 1', tempat: 'Gedung A Lantai 2', pic: 'Budi' },
     { id: 2, kegiatan: 'Workshop UI/UX', waktu: '10:00 - 12:00', ruangan: 'Lab. Komputer', tempat: 'Gedung B Lantai 3', pic: 'Siti' },
@@ -12,9 +63,10 @@ let jadwalData = [
     { id: 6, kegiatan: 'Pelatihan Excel', waktu: '09:00 - 11:00', ruangan: 'Lab. Komputer', tempat: 'Gedung B Lantai 3', pic: 'Siti' },
     { id: 7, kegiatan: 'Meeting Client', waktu: '13:30 - 15:00', ruangan: 'R. VIP', tempat: 'Gedung C Lantai 2', pic: 'Dewi' },
 ];
+let nextJadwalId = 8;
 
 // ============================================
-// DATA EVENT KALENDER (CRUD)
+// DATA EVENT KALENDER
 // ============================================
 let eventData = [
     { id: 1, tanggal: 3, nama: 'Rapat Koordinasi', waktu: '08:00 - 09:30', ruangan: 'R. Meeting 1', tempat: 'Gedung A', pic: 'Budi' },
@@ -31,7 +83,7 @@ let eventData = [
 let nextEventId = 11;
 
 // ============================================
-// DATA CAPAIAN PENGUNJUNG (CRUD)
+// DATA CAPAIAN PENGUNJUNG
 // ============================================
 let capaianData = [
     { bulan: 'Jan', jumlah: 120, target: 200 },
@@ -48,7 +100,9 @@ let capaianData = [
     { bulan: 'Des', jumlah: 280, target: 200 },
 ];
 
-// Data untuk grafik (sync dengan capaianData)
+// ============================================
+// FUNGSI UNTUK GRAFIK
+// ============================================
 function getMonthlyData() {
     return {
         labels: capaianData.map(d => d.bulan),
@@ -66,6 +120,14 @@ const kategoriData = {
     values: [45, 25, 20, 10],
     colors: ['#1a237e', '#3949ab', '#5c6bc0', '#9fa8da'],
 };
+
+// ============================================
+// NAVIGASI
+// ============================================
+function navigateTo(page) {
+    const link = document.querySelector(`.menu a[data-page="${page}"]`);
+    if (link) link.click();
+}
 
 // ============================================
 // SIDEBAR TOGGLE
@@ -186,12 +248,12 @@ function tambahJadwal() {
     const pic = prompt('Masukkan PIC:');
     if (!pic) return;
 
-    const newId = jadwalData.length > 0 ? Math.max(...jadwalData.map(j => j.id)) + 1 : 1;
-    jadwalData.push({ id: newId, kegiatan, waktu, ruangan, tempat, pic });
+    jadwalData.push({ id: nextJadwalId++, kegiatan, waktu, ruangan, tempat, pic });
 
     renderJadwal();
     renderJadwalFull();
     updateStats();
+    simpanSemuaData();
     alert('✅ Jadwal berhasil ditambahkan!');
 }
 
@@ -201,15 +263,16 @@ function hapusJadwal(id) {
         renderJadwal();
         renderJadwalFull();
         updateStats();
+        simpanSemuaData();
         alert('✅ Jadwal berhasil dihapus!');
     }
 }
 
 function renderJadwal() {
     const tbody = document.getElementById('jadwalTableBody');
-    tbody.innerHTML = jadwalData.slice(0, 5).map(item => `
+    tbody.innerHTML = jadwalData.slice(0, 5).map((item, index) => `
         <tr>
-            <td>${item.id}</td>
+            <td>${index + 1}</td>
             <td><strong>${item.kegiatan}</strong></td>
             <td>${item.waktu}</td>
             <td>${item.ruangan}</td>
@@ -221,9 +284,9 @@ function renderJadwal() {
 
 function renderJadwalFull() {
     const tbody = document.getElementById('jadwalFullTable');
-    tbody.innerHTML = jadwalData.map(item => `
+    tbody.innerHTML = jadwalData.map((item, index) => `
         <tr>
-            <td>${item.id}</td>
+            <td>${index + 1}</td>
             <td><strong>${item.kegiatan}</strong></td>
             <td>${item.waktu}</td>
             <td>${item.ruangan}</td>
@@ -246,7 +309,108 @@ function printJadwal() {
 }
 
 // ============================================
-// KALENDER CRUD - FULL
+// DASHBOARD EVENT LIST (READ ONLY) - TAMPILKAN SEMUA
+// ============================================
+
+function renderDashboardEvents() {
+    const container = document.getElementById('dashboardEventList');
+    const badge = document.getElementById('eventCountBadge');
+    if (!container) return;
+
+    // Urutkan berdasarkan tanggal
+    const sortedEvents = [...eventData].sort((a, b) => a.tanggal - b.tanggal);
+    const totalEvents = sortedEvents.length;
+
+    // Update badge
+    if (badge) {
+        badge.textContent = `${totalEvents} Kegiatan`;
+    }
+
+    if (totalEvents === 0) {
+        container.innerHTML = `
+            <div class="dashboard-empty-event">
+                📭 Belum ada kegiatan bulan ini
+            </div>
+        `;
+        return;
+    }
+
+    let html = '';
+    sortedEvents.forEach(e => {
+        html += `
+            <div class="dashboard-event-item">
+                <span class="event-date">${e.tanggal}</span>
+                <span class="event-name">${e.nama}</span>
+                <span class="event-time">🕐 ${e.waktu || '--:--'}</span>
+                <span class="event-pic">👤 ${e.pic}</span>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+// ============================================
+// KALENDER DASHBOARD (Mini)
+// ============================================
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
+function renderCalendar(month, year) {
+    const grid = document.getElementById('calendarGrid');
+    const monthYear = document.getElementById('monthYear');
+
+    const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    monthYear.textContent = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date().getDate();
+    const todayMonth = new Date().getMonth();
+    const todayYear = new Date().getFullYear();
+
+    let html = '';
+    const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+    dayNames.forEach(name => {
+        html += `<div class="day-name">${name}</div>`;
+    });
+
+    for (let i = 0; i < firstDay; i++) {
+        html += `<div class="day empty"></div>`;
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const hasEvent = eventData.some(e => e.tanggal === d);
+        const isToday = (d === today && month === todayMonth && year === todayYear);
+        let className = 'day';
+        if (hasEvent) className += ' has-event';
+        if (isToday) className += ' today';
+        if (!hasEvent && !isToday) className += ' no-event';
+        html += `<div class="${className}">${d}</div>`;
+    }
+
+    grid.innerHTML = html;
+
+    // Update daftar kegiatan di beranda
+    renderDashboardEvents();
+}
+
+document.getElementById('prevMonth').addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11;
+        currentYear--; }
+    renderCalendar(currentMonth, currentYear);
+});
+
+document.getElementById('nextMonth').addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0;
+        currentYear++; }
+    renderCalendar(currentMonth, currentYear);
+});
+
+// ============================================
+// KALENDER FULL (Halaman Kalender) - CRUD
 // ============================================
 let currentMonthFull = new Date().getMonth();
 let currentYearFull = new Date().getFullYear();
@@ -286,6 +450,9 @@ function renderCalendarFull(month, year) {
 
     grid.innerHTML = html;
     showEventDetail(null);
+
+    // Update daftar kegiatan di beranda
+    renderDashboardEvents();
 }
 
 function showEventDetail(tanggal) {
@@ -373,14 +540,12 @@ function saveEvent(e) {
     }
 
     if (id) {
-        // EDIT
         const index = eventData.findIndex(e => e.id === parseInt(id));
         if (index !== -1) {
             eventData[index] = { id: parseInt(id), tanggal, nama, waktu, ruangan, tempat, pic };
             alert('✅ Event berhasil diupdate!');
         }
     } else {
-        // TAMBAH
         eventData.push({ id: nextEventId++, tanggal, nama, waktu, ruangan, tempat, pic });
         alert('✅ Event berhasil ditambahkan!');
     }
@@ -388,6 +553,7 @@ function saveEvent(e) {
     closeEventModal();
     renderCalendarFull(currentMonthFull, currentYearFull);
     renderCalendar(currentMonth, currentYear);
+    simpanSemuaData();
 }
 
 // ===== HAPUS EVENT =====
@@ -399,6 +565,7 @@ function hapusEvent() {
         closeEventModal();
         renderCalendarFull(currentMonthFull, currentYearFull);
         renderCalendar(currentMonth, currentYear);
+        simpanSemuaData();
         alert('✅ Event berhasil dihapus!');
     }
 }
@@ -408,6 +575,7 @@ function hapusEventById(id) {
         eventData = eventData.filter(e => e.id !== id);
         renderCalendarFull(currentMonthFull, currentYearFull);
         renderCalendar(currentMonth, currentYear);
+        simpanSemuaData();
         alert('✅ Event berhasil dihapus!');
     }
 }
@@ -433,62 +601,6 @@ document.getElementById('nextMonthFull').addEventListener('click', () => {
     if (currentMonthFull > 11) { currentMonthFull = 0;
         currentYearFull++; }
     renderCalendarFull(currentMonthFull, currentYearFull);
-});
-
-// ============================================
-// KALENDER DASHBOARD (Mini)
-// ============================================
-let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
-
-function renderCalendar(month, year) {
-    const grid = document.getElementById('calendarGrid');
-    const monthYear = document.getElementById('monthYear');
-
-    const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    monthYear.textContent = `${monthNames[month]} ${year}`;
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date().getDate();
-    const todayMonth = new Date().getMonth();
-    const todayYear = new Date().getFullYear();
-
-    let html = '';
-    const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-    dayNames.forEach(name => {
-        html += `<div class="day-name">${name}</div>`;
-    });
-
-    for (let i = 0; i < firstDay; i++) {
-        html += `<div class="day empty"></div>`;
-    }
-
-    for (let d = 1; d <= daysInMonth; d++) {
-        const hasEvent = eventData.some(e => e.tanggal === d);
-        const isToday = (d === today && month === todayMonth && year === todayYear);
-        let className = 'day';
-        if (hasEvent) className += ' has-event';
-        if (isToday) className += ' today';
-        if (!hasEvent && !isToday) className += ' no-event';
-        html += `<div class="${className}">${d}</div>`;
-    }
-
-    grid.innerHTML = html;
-}
-
-document.getElementById('prevMonth').addEventListener('click', () => {
-    currentMonth--;
-    if (currentMonth < 0) { currentMonth = 11;
-        currentYear--; }
-    renderCalendar(currentMonth, currentYear);
-});
-
-document.getElementById('nextMonth').addEventListener('click', () => {
-    currentMonth++;
-    if (currentMonth > 11) { currentMonth = 0;
-        currentYear++; }
-    renderCalendar(currentMonth, currentYear);
 });
 
 // ============================================
@@ -530,7 +642,6 @@ function saveCapaian(e) {
         return;
     }
 
-    // Cek duplikat bulan (kecuali edit data yang sama)
     const existingIndex = capaianData.findIndex(d => d.bulan === bulan);
     if (index === '') {
         if (existingIndex !== -1) {
@@ -551,6 +662,7 @@ function saveCapaian(e) {
     closeCapaianModal();
     renderCapaianTable();
     updateAllCharts();
+    simpanSemuaData();
 }
 
 function hapusCapaian() {
@@ -561,6 +673,7 @@ function hapusCapaian() {
         closeCapaianModal();
         renderCapaianTable();
         updateAllCharts();
+        simpanSemuaData();
         alert('✅ Data capaian berhasil dihapus!');
     }
 }
@@ -570,6 +683,7 @@ function hapusCapaianByIndex(index) {
         capaianData.splice(index, 1);
         renderCapaianTable();
         updateAllCharts();
+        simpanSemuaData();
         alert('✅ Data capaian berhasil dihapus!');
     }
 }
@@ -584,9 +698,6 @@ function refreshCapaian() {
     alert('🔄 Data capaian berhasil direfresh!');
 }
 
-// ============================================
-// RENDER TABEL CAPAIAN
-// ============================================
 function renderCapaianTable() {
     const tbody = document.getElementById('capaianTableBody');
 
@@ -608,6 +719,7 @@ function renderCapaianTable() {
 
         return `
             <tr>
+                <td>${index + 1}</td>
                 <td><strong>${item.bulan}</strong></td>
                 <td>${item.jumlah}</td>
                 <td>${item.target}</td>
@@ -626,11 +738,8 @@ function renderCapaianTable() {
 // UPDATE ALL CHARTS
 // ============================================
 function updateAllCharts() {
-    const data = getMonthlyData();
-    // Update data global untuk grafik
-    // Chart akan di-render ulang di init
-    initBarChart('monthly');
-    initBarChartFull('monthly');
+    initBarChart(currentPeriod || 'monthly');
+    initBarChartFull(currentPeriodFull || 'monthly');
     initBarChartLaporan(currentLaporanPeriod || 'monthly');
 }
 
@@ -693,7 +802,6 @@ function initBarChart(period) {
     });
 }
 
-// ===== BAR CHART FULL =====
 let barChartFullInstance = null;
 let currentPeriodFull = 'monthly';
 
@@ -732,7 +840,6 @@ function initBarChartFull(period) {
     });
 }
 
-// ===== PIE CHART =====
 let pieChartInstance = null;
 
 function initPieChart() {
@@ -787,7 +894,6 @@ function initPieChartFull() {
     });
 }
 
-// ===== FILTER BUTTON =====
 document.querySelectorAll('#page-dashboard .filter-btn, #page-capaian .filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         const parent = this.closest('.chart-filter');
@@ -865,8 +971,9 @@ function renderLaporanTable(jenis) {
             pic: item.pic
         }));
     } else if (jenis === 'capaian') {
-        headers = ['Bulan', 'Jumlah Pengunjung', 'Target', 'Pencapaian', 'Status'];
-        rows = capaianData.map((item) => ({
+        headers = ['No', 'Bulan', 'Jumlah', 'Target', 'Pencapaian', 'Status'];
+        rows = capaianData.map((item, index) => ({
+            no: index + 1,
             bulan: item.bulan,
             pengunjung: item.jumlah,
             target: item.target,
@@ -874,8 +981,9 @@ function renderLaporanTable(jenis) {
             status: item.jumlah >= item.target ? '✅ Tercapai' : '⚠️ Belum'
         }));
     } else if (jenis === 'kalender') {
-        headers = ['Tanggal', 'Kegiatan', 'Waktu', 'Ruangan', 'Tempat', 'PIC'];
-        rows = eventData.map((item) => ({
+        headers = ['No', 'Tanggal', 'Kegiatan', 'Waktu', 'Ruangan', 'Tempat', 'PIC'];
+        rows = eventData.map((item, index) => ({
+            no: index + 1,
             tanggal: item.tanggal,
             kegiatan: item.nama,
             waktu: item.waktu,
@@ -911,7 +1019,6 @@ function renderLaporanTable(jenis) {
     tbody.innerHTML = bodyHtml;
 }
 
-// ===== LAPORAN CHARTS =====
 function initBarChartLaporan(period) {
     const ctx = document.getElementById('barChartLaporan').getContext('2d');
     if (barChartLaporanInstance) barChartLaporanInstance.destroy();
@@ -1034,18 +1141,34 @@ function setCurrentDate() {
 }
 
 // ============================================
+// HAPUS SEMUA DATA
+// ============================================
+function resetAllData() {
+    if (confirm('⚠️ Yakin ingin menghapus SEMUA data? Ini tidak bisa dibatalkan!')) {
+        localStorage.removeItem('jadwalData');
+        localStorage.removeItem('eventData');
+        localStorage.removeItem('capaianData');
+        localStorage.removeItem('nextEventId');
+        localStorage.removeItem('nextJadwalId');
+        location.reload();
+    }
+}
+
+// ============================================
 // INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
+    muatSemuaData();
+
     renderJadwal();
     renderJadwalFull();
     renderCalendar(currentMonth, currentYear);
     renderCalendarFull(currentMonthFull, currentYearFull);
+    renderDashboardEvents();
     updateStats();
     setCurrentDate();
     renderCapaianTable();
 
-    // Charts
     initBarChart('monthly');
     initPieChart();
     initBarChartFull('monthly');
@@ -1054,8 +1177,16 @@ document.addEventListener('DOMContentLoaded', function() {
     initPieChartLaporan();
 
     generateLaporan();
+    simpanSemuaData();
 
     if (window.innerWidth <= 768) {
         document.getElementById('sidebar').style.transform = 'translateX(-100%)';
     }
+
+    console.log('✅ Data berhasil dimuat dari localStorage!');
+    console.log('📋 Jadwal:', jadwalData.length, 'data');
+    console.log('📅 Event:', eventData.length, 'data');
+    console.log('📊 Capaian:', capaianData.length, 'data');
 });
+
+console.log('💡 Untuk mereset semua data, ketik: resetAllData()');
