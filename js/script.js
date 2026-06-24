@@ -860,3 +860,36 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCapaianTable();
     generateLaporan();
 });
+
+// ============================================
+// TOGGLE SIDEBAR UNTUK HP
+// ============================================
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar.style.transform === 'translateX(0px)') {
+        sidebar.style.transform = 'translateX(-100%)';
+    } else {
+        sidebar.style.transform = 'translateX(0px)';
+    }
+}
+
+// Tutup sidebar saat klik di luar (HP)
+document.addEventListener('click', function(e) {
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.querySelector('.sidebar-toggle');
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+            sidebar.style.transform = 'translateX(-100%)';
+        }
+    }
+});
+
+// Reset sidebar saat resize ke desktop
+window.addEventListener('resize', function() {
+    const sidebar = document.querySelector('.sidebar');
+    if (window.innerWidth > 768) {
+        sidebar.style.transform = 'translateX(0px)';
+    } else {
+        sidebar.style.transform = 'translateX(-100%)';
+    }
+});
