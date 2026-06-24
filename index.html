@@ -71,7 +71,7 @@
         </div>
     </aside>
 
-    <!-- ===== OVERLAY (untuk tutup sidebar di HP) ===== -->
+    <!-- ===== OVERLAY ===== -->
     <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
     <!-- ===== MAIN CONTENT ===== -->
@@ -89,7 +89,6 @@
         <!-- HALAMAN: DASHBOARD -->
         <!-- ========================================== -->
         <div id="page-dashboard" class="page-content active">
-
             <section class="stats">
                 <div class="stat-card">
                     <div class="stat-icon">📋</div>
@@ -130,14 +129,7 @@
                     <div class="table-wrapper">
                         <table>
                             <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Kegiatan</th>
-                                    <th>Waktu</th>
-                                    <th>Ruangan</th>
-                                    <th>Tempat</th>
-                                    <th>PIC</th>
-                                </tr>
+                                <tr><th>No</th><th>Kegiatan</th><th>Waktu</th><th>Ruangan</th><th>Tempat</th><th>PIC</th></tr>
                             </thead>
                             <tbody id="jadwalTableBody"></tbody>
                         </table>
@@ -155,7 +147,7 @@
                     </div>
                     <div class="calendar-grid" id="calendarGrid"></div>
                     <div class="calendar-legend">
-                        <span><span class="dot" style="background:#1a237e;"></span> Ada Kegiatan</span>
+                        <span><span class="dot" style="background:#1a237e;"></span> Ada Event</span>
                         <span><span class="dot" style="background:#e0e0e0;"></span> Kosong</span>
                     </div>
                 </div>
@@ -170,18 +162,11 @@
                             <button class="filter-btn" data-period="yearly">Tahunan</button>
                         </div>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="barChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="barChart"></canvas></div>
                 </div>
-
                 <div class="card chart-card">
-                    <div class="card-header">
-                        <h3>🍩 Kategori Pengunjung</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="pieChart"></canvas>
-                    </div>
+                    <div class="card-header"><h3>🍩 Kategori Pengunjung</h3></div>
+                    <div class="chart-container"><canvas id="pieChart"></canvas></div>
                 </div>
             </section>
         </div>
@@ -200,17 +185,7 @@
                 </div>
                 <div class="table-wrapper" id="jadwalPrintArea">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Kegiatan</th>
-                                <th>Waktu</th>
-                                <th>Ruangan</th>
-                                <th>Tempat</th>
-                                <th>PIC</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>No</th><th>Kegiatan</th><th>Waktu</th><th>Ruangan</th><th>Tempat</th><th>PIC</th><th>Aksi</th></tr></thead>
                         <tbody id="jadwalFullTable"></tbody>
                     </table>
                 </div>
@@ -222,34 +197,37 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- HALAMAN: KALENDER -->
+        <!-- HALAMAN: KALENDER (Dengan CRUD) -->
         <!-- ========================================== -->
         <div id="page-kalender" class="page-content">
             <div class="card" style="padding:24px;">
                 <div class="card-header">
                     <h3>📅 Kalender Kegiatan</h3>
-                    <div class="calendar-nav">
-                        <button id="prevMonthFull">◀</button>
-                        <span id="monthYearFull"></span>
-                        <button id="nextMonthFull">▶</button>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button class="btn-add" onclick="tambahEvent()">+ Tambah Event</button>
+                        <button class="btn-print" onclick="refreshKalenderFull()">🔄 Refresh</button>
                     </div>
+                </div>
+                <div class="calendar-nav" style="justify-content:center;margin-bottom:12px;">
+                    <button id="prevMonthFull">◀</button>
+                    <span id="monthYearFull"></span>
+                    <button id="nextMonthFull">▶</button>
                 </div>
                 <div class="calendar-grid-full" id="calendarGridFull"></div>
                 <div class="calendar-legend">
-                    <span><span class="dot" style="background:#1a237e;"></span> Ada Kegiatan</span>
+                    <span><span class="dot" style="background:#1a237e;"></span> Ada Event</span>
+                    <span><span class="dot" style="background:#ff9800;"></span> Hari Ini</span>
                     <span><span class="dot" style="background:#e0e0e0;"></span> Kosong</span>
                 </div>
                 <div style="margin-top:20px;padding:16px;background:#f8f9fc;border-radius:10px;">
-                    <h4 style="color:#1a237e;margin-bottom:10px;">📌 Daftar Kegiatan Bulan Ini</h4>
-                    <div id="eventListFull">
-                        <p style="color:#888;">Klik tanggal untuk melihat kegiatan</p>
-                    </div>
+                    <h4 style="color:#1a237e;margin-bottom:10px;">📌 Daftar Event Bulan Ini</h4>
+                    <div id="eventListFull"><p style="color:#888;">Klik tanggal untuk melihat & mengelola event</p></div>
                 </div>
             </div>
         </div>
 
         <!-- ========================================== -->
-        <!-- HALAMAN: CAPAIAN -->
+        <!-- HALAMAN: CAPAIAN (Dengan CRUD) -->
         <!-- ========================================== -->
         <div id="page-capaian" class="page-content">
             <div class="row-3" style="margin-bottom:20px;">
@@ -261,37 +239,25 @@
                             <button class="filter-btn" data-period="yearly">Tahunan</button>
                         </div>
                     </div>
-                    <div class="chart-container" style="height:300px;">
-                        <canvas id="barChartFull"></canvas>
-                    </div>
+                    <div class="chart-container" style="height:300px;"><canvas id="barChartFull"></canvas></div>
                 </div>
-
                 <div class="card chart-card">
-                    <div class="card-header">
-                        <h3>🍩 Kategori Pengunjung</h3>
-                    </div>
-                    <div class="chart-container" style="height:300px;">
-                        <canvas id="pieChartFull"></canvas>
-                    </div>
+                    <div class="card-header"><h3>🍩 Kategori Pengunjung</h3></div>
+                    <div class="chart-container" style="height:300px;"><canvas id="pieChartFull"></canvas></div>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
                     <h3>📋 Detail Capaian Pengunjung</h3>
-                    <span class="badge">Update Terbaru</span>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button class="btn-add" onclick="tambahCapaian()">+ Tambah Data</button>
+                        <button class="btn-print" onclick="refreshCapaian()">🔄 Refresh</button>
+                    </div>
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Bulan</th>
-                                <th>Jumlah Pengunjung</th>
-                                <th>Target</th>
-                                <th>Pencapaian</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Bulan</th><th>Jumlah Pengunjung</th><th>Target</th><th>Pencapaian</th><th>Status</th><th>Aksi</th></tr></thead>
                         <tbody id="capaianTableBody"></tbody>
                     </table>
                 </div>
@@ -302,7 +268,6 @@
         <!-- HALAMAN: LAPORAN -->
         <!-- ========================================== -->
         <div id="page-laporan" class="page-content">
-
             <div class="card" style="margin-bottom:20px;">
                 <div class="card-header">
                     <h3>🔍 Filter Laporan</h3>
@@ -340,56 +305,25 @@
             </div>
 
             <div class="stats" id="laporanStats">
-                <div class="stat-card">
-                    <div class="stat-icon">📋</div>
-                    <div>
-                        <p class="stat-label">Total Kegiatan</p>
-                        <p class="stat-value" id="lapTotalKegiatan">0</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👤</div>
-                    <div>
-                        <p class="stat-label">Total PIC</p>
-                        <p class="stat-value" id="lapTotalPic">0</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div>
-                        <p class="stat-label">Total Pengunjung</p>
-                        <p class="stat-value" id="lapTotalPengunjung">0</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📅</div>
-                    <div>
-                        <p class="stat-label">Periode</p>
-                        <p class="stat-value" id="lapPeriode" style="font-size:16px;">-</p>
-                    </div>
-                </div>
+                <div class="stat-card"><div class="stat-icon">📋</div><div><p class="stat-label">Total Kegiatan</p><p class="stat-value" id="lapTotalKegiatan">0</p></div></div>
+                <div class="stat-card"><div class="stat-icon">👤</div><div><p class="stat-label">Total PIC</p><p class="stat-value" id="lapTotalPic">0</p></div></div>
+                <div class="stat-card"><div class="stat-icon">👥</div><div><p class="stat-label">Total Pengunjung</p><p class="stat-value" id="lapTotalPengunjung">0</p></div></div>
+                <div class="stat-card"><div class="stat-icon">📅</div><div><p class="stat-label">Periode</p><p class="stat-value" id="lapPeriode" style="font-size:16px;">-</p></div></div>
             </div>
 
             <div class="row-3" style="margin-bottom:20px;">
                 <div class="card chart-card">
-                    <div class="card-header">
-                        <h3>📊 Grafik Capaian</h3>
+                    <div class="card-header"><h3>📊 Grafik Capaian</h3>
                         <div class="chart-filter">
                             <button class="filter-btn active" data-period="monthly" onclick="ubahGrafikLaporan('monthly')">Bulanan</button>
                             <button class="filter-btn" data-period="yearly" onclick="ubahGrafikLaporan('yearly')">Tahunan</button>
                         </div>
                     </div>
-                    <div class="chart-container" style="height:300px;">
-                        <canvas id="barChartLaporan"></canvas>
-                    </div>
+                    <div class="chart-container" style="height:300px;"><canvas id="barChartLaporan"></canvas></div>
                 </div>
                 <div class="card chart-card">
-                    <div class="card-header">
-                        <h3>🍩 Kategori</h3>
-                    </div>
-                    <div class="chart-container" style="height:300px;">
-                        <canvas id="pieChartLaporan"></canvas>
-                    </div>
+                    <div class="card-header"><h3>🍩 Kategori</h3></div>
+                    <div class="chart-container" style="height:300px;"><canvas id="pieChartLaporan"></canvas></div>
                 </div>
             </div>
 
@@ -403,24 +337,8 @@
                 </div>
                 <div class="table-wrapper" id="laporanTableArea">
                     <table id="laporanTable">
-                        <thead id="laporanThead">
-                            <tr>
-                                <th>No</th>
-                                <th>Kegiatan</th>
-                                <th>Waktu</th>
-                                <th>Ruangan</th>
-                                <th>Tempat</th>
-                                <th>PIC</th>
-                                <th>Pengunjung</th>
-                            </tr>
-                        </thead>
-                        <tbody id="laporanTableBody">
-                            <tr>
-                                <td colspan="7" style="text-align:center;color:#888;padding:40px;">
-                                    📂 Pilih filter dan klik "Tampilkan"
-                                </td>
-                            </tr>
-                        </tbody>
+                        <thead id="laporanThead"><tr><th>No</th><th>Kegiatan</th><th>Waktu</th><th>Ruangan</th><th>Tempat</th><th>PIC</th><th>Pengunjung</th></tr></thead>
+                        <tbody id="laporanTableBody"><tr><td colspan="7" style="text-align:center;color:#888;padding:40px;">📂 Pilih filter dan klik "Tampilkan"</td></tr></tbody>
                     </table>
                 </div>
                 <div id="laporanFooter" style="margin-top:16px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:12px;color:#888;flex-wrap:wrap;">
@@ -454,6 +372,89 @@
         </div>
 
     </main>
+
+    <!-- ===== MODAL EVENT ===== -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalEventTitle">Tambah Event</h3>
+                <button class="modal-close" onclick="closeEventModal()">×</button>
+            </div>
+            <form id="eventForm" onsubmit="saveEvent(event)">
+                <input type="hidden" id="eventId" />
+                <div class="form-group">
+                    <label>Tanggal</label>
+                    <input type="number" id="eventTanggal" min="1" max="31" required placeholder="Contoh: 15" />
+                </div>
+                <div class="form-group">
+                    <label>Nama Kegiatan</label>
+                    <input type="text" id="eventNama" required placeholder="Masukkan nama kegiatan" />
+                </div>
+                <div class="form-group">
+                    <label>Waktu</label>
+                    <input type="text" id="eventWaktu" placeholder="Contoh: 09:00 - 10:00" />
+                </div>
+                <div class="form-group">
+                    <label>Ruangan</label>
+                    <input type="text" id="eventRuangan" placeholder="Masukkan ruangan" />
+                </div>
+                <div class="form-group">
+                    <label>Tempat</label>
+                    <input type="text" id="eventTempat" placeholder="Masukkan tempat" />
+                </div>
+                <div class="form-group">
+                    <label>PIC</label>
+                    <input type="text" id="eventPic" placeholder="Masukkan PIC" />
+                </div>
+                <div class="form-group" style="flex-direction:row;gap:10px;margin-top:10px;">
+                    <button type="submit" class="btn-add" style="flex:1;">💾 Simpan</button>
+                    <button type="button" class="btn-delete" id="btnDeleteEvent" onclick="hapusEvent()" style="display:none;">🗑️ Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== MODAL CAPAIAN ===== -->
+    <div class="modal" id="capaianModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalCapaianTitle">Tambah Data Capaian</h3>
+                <button class="modal-close" onclick="closeCapaianModal()">×</button>
+            </div>
+            <form id="capaianForm" onsubmit="saveCapaian(event)">
+                <input type="hidden" id="capaianIndex" />
+                <div class="form-group">
+                    <label>Bulan</label>
+                    <select id="capaianBulan" required>
+                        <option value="Jan">Januari</option>
+                        <option value="Feb">Februari</option>
+                        <option value="Mar">Maret</option>
+                        <option value="Apr">April</option>
+                        <option value="Mei">Mei</option>
+                        <option value="Jun">Juni</option>
+                        <option value="Jul">Juli</option>
+                        <option value="Agu">Agustus</option>
+                        <option value="Sep">September</option>
+                        <option value="Okt">Oktober</option>
+                        <option value="Nov">November</option>
+                        <option value="Des">Desember</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Jumlah Pengunjung</label>
+                    <input type="number" id="capaianJumlah" min="0" required placeholder="Masukkan jumlah pengunjung" />
+                </div>
+                <div class="form-group">
+                    <label>Target</label>
+                    <input type="number" id="capaianTarget" min="0" required placeholder="Masukkan target" />
+                </div>
+                <div class="form-group" style="flex-direction:row;gap:10px;margin-top:10px;">
+                    <button type="submit" class="btn-add" style="flex:1;">💾 Simpan</button>
+                    <button type="button" class="btn-delete" id="btnDeleteCapaian" onclick="hapusCapaian()" style="display:none;">🗑️ Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="js/script.js"></script>
 </body>
