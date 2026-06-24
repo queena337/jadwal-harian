@@ -4,24 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Penjadwalan & Capaian</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
 </head>
 <body>
 
+    <!-- ===== HEADER (dengan Hamburger Menu) ===== -->
+    <header class="header-top">
+        <div class="header-container">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="header-logo">
+                    <span class="logo-icon">📊</span>
+                    <span class="logo-text">Dash<span>board</span></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="date" id="currentDate"></span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+    </header>
+
     <!-- ===== SIDEBAR ===== -->
-    <aside class="sidebar">
-        <div class="logo">📊 <span>Dash</span>board</div>
-        <div class="sub-logo">Sistem Penjadwalan</div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="logo">📊 <span>Dash</span>board</div>
+            <div class="sub-logo">Sistem Penjadwalan</div>
+        </div>
 
         <nav class="menu">
-            <a href="#" class="active" data-page="dashboard">🏠 <span>Beranda</span></a>
-            <a href="#" data-page="jadwal">📋 <span>Jadwal Harian</span></a>
-            <a href="#" data-page="kalender">📅 <span>Kalender</span></a>
-            <a href="#" data-page="capaian">📈 <span>Capaian</span></a>
-            <a href="#" data-page="laporan">📁 <span>Laporan</span></a>
-            <a href="#" data-page="pengaturan">⚙️ <span>Pengaturan</span></a>
+            <a href="#" class="active" data-page="dashboard">
+                <span class="icon">🏠</span>
+                <span class="text">Beranda</span>
+            </a>
+            <a href="#" data-page="jadwal">
+                <span class="icon">📋</span>
+                <span class="text">Jadwal Harian</span>
+            </a>
+            <a href="#" data-page="kalender">
+                <span class="icon">📅</span>
+                <span class="text">Kalender</span>
+            </a>
+            <a href="#" data-page="capaian">
+                <span class="icon">📈</span>
+                <span class="text">Capaian</span>
+            </a>
+            <a href="#" data-page="laporan">
+                <span class="icon">📁</span>
+                <span class="text">Laporan</span>
+            </a>
+            <a href="#" data-page="pengaturan">
+                <span class="icon">⚙️</span>
+                <span class="text">Pengaturan</span>
+            </a>
         </nav>
 
         <div class="sidebar-footer">
@@ -30,27 +71,25 @@
         </div>
     </aside>
 
-    <!-- ===== MAIN CONTENT ===== -->
-    <main class="main-content">
+    <!-- ===== OVERLAY (untuk tutup sidebar di HP) ===== -->
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
-        <!-- HEADER -->
-        <header class="header">
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content" id="mainContent">
+
+        <!-- SUB HEADER -->
+        <div class="sub-header">
             <div>
                 <h1 id="pageTitle">Dashboard</h1>
                 <p id="pageSubtitle">Selamat datang, Admin 👋</p>
             </div>
-            <div class="header-right">
-                <span class="date" id="currentDate"></span>
-                <div class="avatar">A</div>
-            </div>
-        </header>
+        </div>
 
         <!-- ========================================== -->
-        <!-- HALAMAN: DASHBOARD (Default) -->
+        <!-- HALAMAN: DASHBOARD -->
         <!-- ========================================== -->
         <div id="page-dashboard" class="page-content active">
 
-            <!-- STATISTIK CARDS -->
             <section class="stats">
                 <div class="stat-card">
                     <div class="stat-icon">📋</div>
@@ -73,9 +112,15 @@
                         <p class="stat-value" id="totalPengunjung">0</p>
                     </div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div>
+                        <p class="stat-label">Hari Ini</p>
+                        <p class="stat-value" id="hariIni" style="font-size:16px;">-</p>
+                    </div>
+                </div>
             </section>
 
-            <!-- JADWAL HARIAN + KALENDER -->
             <section class="row-2">
                 <div class="card table-card">
                     <div class="card-header">
@@ -116,7 +161,6 @@
                 </div>
             </section>
 
-            <!-- GRAFIK CAPAIAN -->
             <section class="row-3">
                 <div class="card chart-card">
                     <div class="card-header">
@@ -151,7 +195,7 @@
                     <h3>📋 Semua Jadwal Harian</h3>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;">
                         <button class="btn-print" onclick="printJadwal()">🖨️ Cetak</button>
-                        <button class="btn-add" onclick="tambahJadwal()">+ Tambah Jadwal</button>
+                        <button class="btn-add" onclick="tambahJadwal()">+ Tambah</button>
                     </div>
                 </div>
                 <div class="table-wrapper" id="jadwalPrintArea">
@@ -259,11 +303,10 @@
         <!-- ========================================== -->
         <div id="page-laporan" class="page-content">
 
-            <!-- Filter Laporan -->
             <div class="card" style="margin-bottom:20px;">
                 <div class="card-header">
                     <h3>🔍 Filter Laporan</h3>
-                    <span class="badge">Generate Laporan</span>
+                    <span class="badge">Generate</span>
                 </div>
                 <div class="filter-laporan">
                     <div class="filter-group">
@@ -271,8 +314,8 @@
                         <select id="laporanJenis">
                             <option value="all">📋 Semua Data</option>
                             <option value="jadwal">📋 Jadwal Harian</option>
-                            <option value="capaian">📊 Capaian Pengunjung</option>
-                            <option value="kalender">📅 Kalender Kegiatan</option>
+                            <option value="capaian">📊 Capaian</option>
+                            <option value="kalender">📅 Kalender</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -281,7 +324,7 @@
                             <option value="bulan_ini">Bulan Ini</option>
                             <option value="bulan_lalu">Bulan Lalu</option>
                             <option value="tahun_ini">Tahun Ini</option>
-                            <option value="custom">Custom Tanggal</option>
+                            <option value="custom">Custom</option>
                         </select>
                     </div>
                     <div class="filter-group" id="dateRangeGroup" style="display:none;">
@@ -296,7 +339,6 @@
                 </div>
             </div>
 
-            <!-- Statistik Laporan -->
             <div class="stats" id="laporanStats">
                 <div class="stat-card">
                     <div class="stat-icon">📋</div>
@@ -322,17 +364,16 @@
                 <div class="stat-card">
                     <div class="stat-icon">📅</div>
                     <div>
-                        <p class="stat-label">Periode Laporan</p>
+                        <p class="stat-label">Periode</p>
                         <p class="stat-value" id="lapPeriode" style="font-size:16px;">-</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Grafik Laporan -->
             <div class="row-3" style="margin-bottom:20px;">
                 <div class="card chart-card">
                     <div class="card-header">
-                        <h3>📊 Grafik Capaian Pengunjung</h3>
+                        <h3>📊 Grafik Capaian</h3>
                         <div class="chart-filter">
                             <button class="filter-btn active" data-period="monthly" onclick="ubahGrafikLaporan('monthly')">Bulanan</button>
                             <button class="filter-btn" data-period="yearly" onclick="ubahGrafikLaporan('yearly')">Tahunan</button>
@@ -344,7 +385,7 @@
                 </div>
                 <div class="card chart-card">
                     <div class="card-header">
-                        <h3>🍩 Kategori Pengunjung</h3>
+                        <h3>🍩 Kategori</h3>
                     </div>
                     <div class="chart-container" style="height:300px;">
                         <canvas id="pieChartLaporan"></canvas>
@@ -352,10 +393,9 @@
                 </div>
             </div>
 
-            <!-- Tabel Laporan -->
             <div class="card" style="margin-bottom:20px;" id="laporanCard">
                 <div class="card-header">
-                    <h3>📋 Data Laporan Lengkap</h3>
+                    <h3>📋 Data Laporan</h3>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;">
                         <span class="badge" id="lapJumlahData">0 Data</span>
                         <span class="badge" style="background:#4caf50;color:#fff;" id="lapStatus">Siap</span>
@@ -377,7 +417,7 @@
                         <tbody id="laporanTableBody">
                             <tr>
                                 <td colspan="7" style="text-align:center;color:#888;padding:40px;">
-                                    📂 Pilih filter dan klik "Tampilkan Laporan" untuk melihat data
+                                    📂 Pilih filter dan klik "Tampilkan"
                                 </td>
                             </tr>
                         </tbody>
@@ -386,11 +426,10 @@
                 <div id="laporanFooter" style="margin-top:16px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:12px;color:#888;flex-wrap:wrap;">
                     <span>🕐 Dicetak: <span id="lapTanggalCetak"></span></span>
                     <span>📌 <span id="lapJenisLaporan">Semua Data</span></span>
-                    <span>© Sistem Penjadwalan - Laporan Resmi</span>
+                    <span>© Sistem Penjadwalan</span>
                 </div>
             </div>
 
-            <!-- Tombol Export -->
             <div class="card" style="text-align:center;padding:24px;">
                 <h4 style="color:#1a237e;margin-bottom:16px;">📥 Export Laporan</h4>
                 <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
@@ -399,9 +438,6 @@
                     <button class="btn-export print" onclick="printLaporan()">🖨️ Cetak</button>
                     <button class="btn-export word" onclick="exportWord()">📝 Word</button>
                 </div>
-                <p style="margin-top:12px;color:#888;font-size:13px;">
-                    💡 Klik tombol di atas untuk mengekspor data laporan
-                </p>
             </div>
         </div>
 
@@ -413,12 +449,12 @@
                 <div style="font-size:60px;margin-bottom:16px;">⚙️</div>
                 <h2 style="color:#1a237e;">Halaman Pengaturan</h2>
                 <p style="color:#888;margin:10px 0 20px;">Fitur pengaturan sedang dalam pengembangan</p>
-                <button class="btn-add" onclick="alert('Fitur pengaturan akan segera hadir!')">💾 Simpan Pengaturan</button>
+                <button class="btn-add" onclick="alert('Fitur pengaturan akan segera hadir!')">💾 Simpan</button>
             </div>
         </div>
 
     </main>
 
-    <script src="js/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
