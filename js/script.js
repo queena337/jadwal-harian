@@ -50,21 +50,21 @@ let eventData = [];
 let nextEventId = 1;
 
 // ============================================
-// DATA CAPAIAN PENGUNJUNG
+// DATA CAPAIAN PENGUNJUNG (Dengan Kategori)
 // ============================================
 let capaianData = [
-    { bulan: 'Jan', jumlah: 120, target: 200 },
-    { bulan: 'Feb', jumlah: 150, target: 200 },
-    { bulan: 'Mar', jumlah: 180, target: 200 },
-    { bulan: 'Apr', jumlah: 170, target: 200 },
-    { bulan: 'Mei', jumlah: 200, target: 200 },
-    { bulan: 'Jun', jumlah: 220, target: 200 },
-    { bulan: 'Jul', jumlah: 190, target: 200 },
-    { bulan: 'Agu', jumlah: 210, target: 200 },
-    { bulan: 'Sep', jumlah: 240, target: 200 },
-    { bulan: 'Okt', jumlah: 260, target: 200 },
-    { bulan: 'Nov', jumlah: 230, target: 200 },
-    { bulan: 'Des', jumlah: 280, target: 200 },
+    { bulan: 'Jan', jumlah: 120, target: 200, mahasiswa: 54, dosen: 30, umum: 24, instansi: 12 },
+    { bulan: 'Feb', jumlah: 150, target: 200, mahasiswa: 67, dosen: 37, umum: 30, instansi: 16 },
+    { bulan: 'Mar', jumlah: 180, target: 200, mahasiswa: 81, dosen: 45, umum: 36, instansi: 18 },
+    { bulan: 'Apr', jumlah: 170, target: 200, mahasiswa: 76, dosen: 42, umum: 34, instansi: 18 },
+    { bulan: 'Mei', jumlah: 200, target: 200, mahasiswa: 90, dosen: 50, umum: 40, instansi: 20 },
+    { bulan: 'Jun', jumlah: 220, target: 200, mahasiswa: 99, dosen: 55, umum: 44, instansi: 22 },
+    { bulan: 'Jul', jumlah: 190, target: 200, mahasiswa: 85, dosen: 47, umum: 38, instansi: 20 },
+    { bulan: 'Agu', jumlah: 210, target: 200, mahasiswa: 94, dosen: 52, umum: 42, instansi: 22 },
+    { bulan: 'Sep', jumlah: 240, target: 200, mahasiswa: 108, dosen: 60, umum: 48, instansi: 24 },
+    { bulan: 'Okt', jumlah: 260, target: 200, mahasiswa: 117, dosen: 65, umum: 52, instansi: 26 },
+    { bulan: 'Nov', jumlah: 230, target: 200, mahasiswa: 103, dosen: 57, umum: 46, instansi: 24 },
+    { bulan: 'Des', jumlah: 280, target: 200, mahasiswa: 126, dosen: 70, umum: 56, instansi: 28 },
 ];
 
 // ============================================
@@ -82,11 +82,56 @@ const yearlyData = {
     values: [1800, 2100, 2450, 2800, 3100],
 };
 
-const kategoriData = {
-    labels: ['Mahasiswa', 'Dosen', 'Umum', 'Instansi'],
-    values: [45, 25, 20, 10],
-    colors: ['#1a237e', '#3949ab', '#5c6bc0', '#9fa8da'],
-};
+// ============================================
+// DATA UNTUK GRAFIK PIE (Dinamis dari capaianData)
+// ============================================
+
+function getPieData() {
+    let totalMahasiswa = 0;
+    let totalDosen = 0;
+    let totalUmum = 0;
+    let totalInstansi = 0;
+
+    capaianData.forEach(item => {
+        totalMahasiswa += item.mahasiswa || 0;
+        totalDosen += item.dosen || 0;
+        totalUmum += item.umum || 0;
+        totalInstansi += item.instansi || 0;
+    });
+
+    const total = totalMahasiswa + totalDosen + totalUmum + totalInstansi;
+
+    if (total === 0) {
+        return {
+            labels: ['Belum ada data'],
+            values: [1],
+            colors: ['#e0e0e0']
+        };
+    }
+
+    const labels = ['Mahasiswa', 'Dosen', 'Umum', 'Instansi'];
+    const values = [totalMahasiswa, totalDosen, totalUmum, totalInstansi];
+    const colors = ['#1a237e', '#3949ab', '#5c6bc0', '#9fa8da'];
+
+    const filteredLabels = [];
+    const filteredValues = [];
+    const filteredColors = [];
+
+    for (let i = 0; i < labels.length; i++) {
+        if (values[i] > 0) {
+            filteredLabels.push(labels[i]);
+            filteredValues.push(values[i]);
+            filteredColors.push(colors[i]);
+        }
+    }
+
+    return {
+        labels: filteredLabels.length > 0 ? filteredLabels : ['Belum ada data'],
+        values: filteredLabels.length > 0 ? filteredValues : [1],
+        colors: filteredLabels.length > 0 ? filteredColors : ['#e0e0e0'],
+        total: total
+    };
+}
 
 // ============================================
 // LOCALSTORAGE
@@ -909,46 +954,89 @@ let currentMasterTab = 'ruangan';
 
 function switchMasterTab(tab) {
     currentMasterTab = tab;
-    document.querySelectorAll('.master-tab').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('#masterModal .tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById(`master-${tab}`).classList.add('active');
-    document.querySelector(`#masterModal .tab-btn[onclick="switchMasterTab('${tab}')"]`).classList.add('active');
+    
+    document.querySelectorAll('.master-tab').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = 'none';
+    });
+    
+    document.querySelectorAll('#masterModal .tab-btn').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    const targetTab = document.getElementById(`master-${tab}`);
+    if (targetTab) {
+        targetTab.classList.add('active');
+        targetTab.style.display = 'block';
+    }
+    
+    const targetBtn = document.querySelector(`#masterModal .tab-btn[onclick="switchMasterTab('${tab}')"]`);
+    if (targetBtn) {
+        targetBtn.classList.add('active');
+    }
+    
     renderMasterData();
 }
 
 function renderMasterData() {
+    // ===== RUANGAN =====
     const listRuangan = document.getElementById('listRuangan');
-    listRuangan.innerHTML = masterRuangan.map(item => `
-        <span class="master-item">
-            ${item}
-            <button onclick="hapusMaster('ruangan', '${item}')">✕</button>
-        </span>
-    `).join('');
+    if (listRuangan) {
+        if (masterRuangan.length === 0) {
+            listRuangan.innerHTML = '<p style="color:#888;font-size:13px;padding:8px 0;">Belum ada data ruangan</p>';
+        } else {
+            listRuangan.innerHTML = masterRuangan.map(item => `
+                <span class="master-item">
+                    ${item}
+                    <button onclick="hapusMaster('ruangan', '${item}')">✕</button>
+                </span>
+            `).join('');
+        }
+    }
 
+    // ===== TEMPAT =====
     const listTempat = document.getElementById('listTempat');
-    listTempat.innerHTML = masterTempat.map(item => `
-        <span class="master-item">
-            ${item}
-            <button onclick="hapusMaster('tempat', '${item}')">✕</button>
-        </span>
-    `).join('');
+    if (listTempat) {
+        if (masterTempat.length === 0) {
+            listTempat.innerHTML = '<p style="color:#888;font-size:13px;padding:8px 0;">Belum ada data tempat</p>';
+        } else {
+            listTempat.innerHTML = masterTempat.map(item => `
+                <span class="master-item">
+                    ${item}
+                    <button onclick="hapusMaster('tempat', '${item}')">✕</button>
+                </span>
+            `).join('');
+        }
+    }
 
+    // ===== PIC =====
     const listPic = document.getElementById('listPic');
-    listPic.innerHTML = masterPic.map(item => `
-        <span class="master-item">
-            ${item}
-            <button onclick="hapusMaster('pic', '${item}')">✕</button>
-        </span>
-    `).join('');
+    if (listPic) {
+        if (masterPic.length === 0) {
+            listPic.innerHTML = '<p style="color:#888;font-size:13px;padding:8px 0;">Belum ada data PIC</p>';
+        } else {
+            listPic.innerHTML = masterPic.map(item => `
+                <span class="master-item">
+                    ${item}
+                    <button onclick="hapusMaster('pic', '${item}')">✕</button>
+                </span>
+            `).join('');
+        }
+    }
 
+    // ===== INSTANSI =====
     const listInstansi = document.getElementById('listInstansi');
     if (listInstansi) {
-        listInstansi.innerHTML = masterInstansi.map(item => `
-            <span class="master-item">
-                ${item}
-                <button onclick="hapusMaster('instansi', '${item}')">✕</button>
-            </span>
-        `).join('');
+        if (masterInstansi.length === 0) {
+            listInstansi.innerHTML = '<p style="color:#888;font-size:13px;padding:8px 0;">Belum ada data instansi</p>';
+        } else {
+            listInstansi.innerHTML = masterInstansi.map(item => `
+                <span class="master-item">
+                    ${item}
+                    <button onclick="hapusMaster('instansi', '${item}')">✕</button>
+                </span>
+            `).join('');
+        }
     }
 }
 
@@ -1019,6 +1107,8 @@ function hapusMaster(jenis, value) {
         case 'instansi':
             masterInstansi = masterInstansi.filter(item => item !== value);
             break;
+        default:
+            return;
     }
     renderMasterData();
     updateDropdowns();
@@ -1329,7 +1419,7 @@ document.getElementById('nextMonthFull').addEventListener('click', () => {
 });
 
 // ============================================
-// CAPAIAN CRUD
+// CAPAIAN CRUD (Dengan Kategori)
 // ============================================
 function tambahCapaian() {
     document.getElementById('modalCapaianTitle').textContent = 'Tambah Data Capaian';
@@ -1337,6 +1427,10 @@ function tambahCapaian() {
     document.getElementById('capaianBulan').value = 'Jan';
     document.getElementById('capaianJumlah').value = '';
     document.getElementById('capaianTarget').value = '200';
+    document.getElementById('capaianMahasiswa').value = '';
+    document.getElementById('capaianDosen').value = '';
+    document.getElementById('capaianUmum').value = '';
+    document.getElementById('capaianInstansi').value = '';
     document.getElementById('btnDeleteCapaian').style.display = 'none';
     document.getElementById('capaianModal').classList.add('active');
 }
@@ -1350,6 +1444,10 @@ function editCapaian(index) {
     document.getElementById('capaianBulan').value = data.bulan;
     document.getElementById('capaianJumlah').value = data.jumlah;
     document.getElementById('capaianTarget').value = data.target;
+    document.getElementById('capaianMahasiswa').value = data.mahasiswa || 0;
+    document.getElementById('capaianDosen').value = data.dosen || 0;
+    document.getElementById('capaianUmum').value = data.umum || 0;
+    document.getElementById('capaianInstansi').value = data.instansi || 0;
     document.getElementById('btnDeleteCapaian').style.display = 'inline-block';
     document.getElementById('capaianModal').classList.add('active');
 }
@@ -1361,10 +1459,21 @@ function saveCapaian(e) {
     const bulan = document.getElementById('capaianBulan').value;
     const jumlah = parseInt(document.getElementById('capaianJumlah').value);
     const target = parseInt(document.getElementById('capaianTarget').value);
+    const mahasiswa = parseInt(document.getElementById('capaianMahasiswa').value) || 0;
+    const dosen = parseInt(document.getElementById('capaianDosen').value) || 0;
+    const umum = parseInt(document.getElementById('capaianUmum').value) || 0;
+    const instansi = parseInt(document.getElementById('capaianInstansi').value) || 0;
 
     if (!bulan || isNaN(jumlah) || isNaN(target)) {
-        alert('⚠️ Semua field wajib diisi dengan benar!');
+        alert('⚠️ Jumlah dan Target wajib diisi!');
         return;
+    }
+
+    const totalKategori = mahasiswa + dosen + umum + instansi;
+    if (totalKategori > 0 && totalKategori !== jumlah) {
+        if (!confirm(`⚠️ Total kategori (${totalKategori}) tidak sama dengan Jumlah (${jumlah}).\nApakah Anda yakin ingin menyimpan?`)) {
+            return;
+        }
     }
 
     const existingIndex = capaianData.findIndex(d => d.bulan === bulan);
@@ -1373,14 +1482,14 @@ function saveCapaian(e) {
             alert(`⚠️ Data untuk bulan ${bulan} sudah ada!`);
             return;
         }
-        capaianData.push({ bulan, jumlah, target });
+        capaianData.push({ bulan, jumlah, target, mahasiswa, dosen, umum, instansi });
         alert('✅ Data capaian berhasil ditambahkan!');
     } else {
         if (existingIndex !== -1 && existingIndex !== parseInt(index)) {
             alert(`⚠️ Data untuk bulan ${bulan} sudah ada!`);
             return;
         }
-        capaianData[parseInt(index)] = { bulan, jumlah, target };
+        capaianData[parseInt(index)] = { bulan, jumlah, target, mahasiswa, dosen, umum, instansi };
         alert('✅ Data capaian berhasil diupdate!');
     }
 
@@ -1423,6 +1532,9 @@ function refreshCapaian() {
     alert('🔄 Data capaian berhasil direfresh!');
 }
 
+// ============================================
+// RENDER TABEL CAPAIAN (Dengan Progress Bar & Persentase)
+// ============================================
 function renderCapaianTable() {
     const tbody = document.getElementById('capaianTableBody');
 
@@ -1442,13 +1554,29 @@ function renderCapaianTable() {
             statusClass = 'status-danger';
         }
 
+        const progressWidth = Math.min(persentase, 100);
+        let barColor = '#f44336';
+        if (persentase >= 75) barColor = '#ff9800';
+        if (persentase >= 100) barColor = '#4caf50';
+
+        const kategoriDetail = (item.mahasiswa || item.dosen || item.umum || item.instansi) ? 
+            `📊 M:${item.mahasiswa || 0} D:${item.dosen || 0} U:${item.umum || 0} I:${item.instansi || 0}` : '';
+
         return `
             <tr>
                 <td>${index + 1}</td>
                 <td><strong>${item.bulan}</strong></td>
                 <td>${item.jumlah}</td>
                 <td>${item.target}</td>
-                <td>${persentase}%</td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="flex:1;background:#e0e0e0;border-radius:10px;height:8px;max-width:100px;">
+                            <div style="width:${progressWidth}%;background:${barColor};border-radius:10px;height:8px;transition:width 0.5s;"></div>
+                        </div>
+                        <span style="font-weight:700;color:#1a237e;min-width:45px;font-size:14px;">${persentase}%</span>
+                    </div>
+                    ${kategoriDetail ? `<div style="font-size:10px;color:#888;margin-top:2px;">${kategoriDetail}</div>` : ''}
+                </td>
                 <td><span class="${statusClass}">${status}</span></td>
                 <td>
                     <button class="btn-edit" onclick="editCapaian(${index})">✏️ Edit</button>
@@ -1476,10 +1604,280 @@ function updateAllCharts() {
     initBarChart(currentPeriod || 'monthly');
     initBarChartFull(currentPeriodFull || 'monthly');
     initBarChartLaporan(currentLaporanPeriod || 'monthly');
+    initPieChart();
+    initPieChartFull();
+    initPieChartLaporan();
 }
 
 // ============================================
-// GRAFIK
+// GRAFIK PIE (Dashboard) - Dinamis dari capaianData
+// ============================================
+let pieChartInstance = null;
+
+function initPieChart() {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    if (pieChartInstance) pieChartInstance.destroy();
+
+    const pieData = getPieData();
+    const total = pieData.values.reduce((a, b) => a + b, 0);
+
+    if (total === 0 || pieData.labels[0] === 'Belum ada data') {
+        pieChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Belum ada data'],
+                datasets: [{
+                    data: [1],
+                    backgroundColor: ['#e0e0e0'],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 14,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: { size: 13 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function() {
+                                return 'Belum ada data capaian';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        return;
+    }
+
+    pieChartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: pieData.labels,
+            datasets: [{
+                data: pieData.values,
+                backgroundColor: pieData.colors,
+                borderWidth: 2,
+                borderColor: '#fff',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 14,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { size: 13 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${percentage}% (${value} orang)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// GRAFIK PIE (Halaman Capaian) - Dinamis dari capaianData
+// ============================================
+let pieChartFullInstance = null;
+
+function initPieChartFull() {
+    const ctx = document.getElementById('pieChartFull').getContext('2d');
+    if (pieChartFullInstance) pieChartFullInstance.destroy();
+
+    const pieData = getPieData();
+    const total = pieData.values.reduce((a, b) => a + b, 0);
+
+    if (total === 0 || pieData.labels[0] === 'Belum ada data') {
+        pieChartFullInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Belum ada data'],
+                datasets: [{
+                    data: [1],
+                    backgroundColor: ['#e0e0e0'],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 14,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: { size: 13 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function() {
+                                return 'Belum ada data capaian';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        return;
+    }
+
+    pieChartFullInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: pieData.labels,
+            datasets: [{
+                data: pieData.values,
+                backgroundColor: pieData.colors,
+                borderWidth: 2,
+                borderColor: '#fff',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 14,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { size: 13 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${percentage}% (${value} orang)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// GRAFIK PIE (Laporan) - Dinamis dari capaianData
+// ============================================
+let pieChartLaporanInstance = null;
+
+function initPieChartLaporan() {
+    const ctx = document.getElementById('pieChartLaporan').getContext('2d');
+    if (pieChartLaporanInstance) pieChartLaporanInstance.destroy();
+
+    const pieData = getPieData();
+    const total = pieData.values.reduce((a, b) => a + b, 0);
+
+    if (total === 0 || pieData.labels[0] === 'Belum ada data') {
+        pieChartLaporanInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Belum ada data'],
+                datasets: [{
+                    data: [1],
+                    backgroundColor: ['#e0e0e0'],
+                    borderWidth: 3,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 16,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: { size: 13 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function() {
+                                return 'Belum ada data capaian';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        return;
+    }
+
+    pieChartLaporanInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: pieData.labels,
+            datasets: [{
+                data: pieData.values,
+                backgroundColor: pieData.colors,
+                borderWidth: 3,
+                borderColor: '#fff',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { size: 13 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${percentage}% (${value} orang)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ============================================
+// GRAFIK BATANG (Dashboard)
 // ============================================
 let barChartInstance = null;
 let currentPeriod = 'monthly';
@@ -1519,6 +1917,9 @@ function initBarChart(period) {
     });
 }
 
+// ============================================
+// GRAFIK BATANG (Halaman Capaian)
+// ============================================
 let barChartFullInstance = null;
 let currentPeriodFull = 'monthly';
 
@@ -1557,55 +1958,42 @@ function initBarChartFull(period) {
     });
 }
 
-let pieChartInstance = null;
+// ============================================
+// GRAFIK BATANG (Laporan)
+// ============================================
+let barChartLaporanInstance = null;
+let currentLaporanPeriod = 'monthly';
 
-function initPieChart() {
-    const ctx = document.getElementById('pieChart').getContext('2d');
-    if (pieChartInstance) pieChartInstance.destroy();
+function initBarChartLaporan(period) {
+    const ctx = document.getElementById('barChartLaporan').getContext('2d');
+    if (barChartLaporanInstance) barChartLaporanInstance.destroy();
 
-    pieChartInstance = new Chart(ctx, {
-        type: 'pie',
+    const data = period === 'monthly' ? getMonthlyData() : yearlyData;
+    const label = period === 'monthly' ? 'Jumlah Pengunjung per Bulan' : 'Jumlah Pengunjung per Tahun';
+    const bgColor = period === 'monthly' ? '#1a237e' : '#ffca28';
+
+    barChartLaporanInstance = new Chart(ctx, {
+        type: 'bar',
         data: {
-            labels: kategoriData.labels,
+            labels: data.labels,
             datasets: [{
-                data: kategoriData.values,
-                backgroundColor: kategoriData.colors,
+                label: label,
+                data: data.values,
+                backgroundColor: bgColor,
+                borderColor: period === 'monthly' ? '#0d1445' : '#e6b800',
                 borderWidth: 2,
-                borderColor: '#fff',
+                borderRadius: 6,
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyle: 'circle' } }
-            }
-        }
-    });
-}
-
-let pieChartFullInstance = null;
-
-function initPieChartFull() {
-    const ctx = document.getElementById('pieChartFull').getContext('2d');
-    if (pieChartFullInstance) pieChartFullInstance.destroy();
-
-    pieChartFullInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: kategoriData.labels,
-            datasets: [{
-                data: kategoriData.values,
-                backgroundColor: kategoriData.colors,
-                borderWidth: 2,
-                borderColor: '#fff',
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyle: 'circle' } }
+                legend: { display: true, position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 13 } } }
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#eee' }, ticks: { font: { size: 12 } } },
+                x: { grid: { display: false }, ticks: { font: { size: 12 } } }
             }
         }
     });
@@ -1623,9 +2011,11 @@ document.querySelectorAll('#page-dashboard .filter-btn, #page-capaian .filter-bt
         if (page && page.id === 'page-dashboard') {
             currentPeriod = period;
             initBarChart(period);
+            initPieChart();
         } else if (page && page.id === 'page-capaian') {
             currentPeriodFull = period;
             initBarChartFull(period);
+            initPieChartFull();
         }
     });
 });
@@ -1633,10 +2023,6 @@ document.querySelectorAll('#page-dashboard .filter-btn, #page-capaian .filter-bt
 // ============================================
 // LAPORAN
 // ============================================
-let barChartLaporanInstance = null;
-let pieChartLaporanInstance = null;
-let currentLaporanPeriod = 'monthly';
-
 function toggleDateRange() {
     const periode = document.getElementById('laporanPeriode').value;
     document.getElementById('dateRangeGroup').style.display = periode === 'custom' ? 'flex' : 'none';
@@ -1732,14 +2118,19 @@ function renderLaporanTable(jenis) {
 
     if (jenis === 'capaian') {
         headers = ['No', 'Bulan', 'Jumlah', 'Target', 'Pencapaian', 'Status'];
-        rows = capaianData.map((item, index) => ({
-            no: index + 1,
-            bulan: item.bulan,
-            jumlah: item.jumlah,
-            target: item.target,
-            pencapaian: `${Math.round((item.jumlah / item.target) * 100)}%`,
-            status: item.jumlah >= item.target ? '✅ Tercapai' : '⚠️ Belum'
-        }));
+        rows = capaianData.map((item, index) => {
+            const persentase = Math.round((item.jumlah / item.target) * 100);
+            let status = item.jumlah >= item.target ? '✅ Tercapai' : 
+                         item.jumlah >= (item.target * 0.75) ? '⚠️ Mendekati' : '❌ Belum';
+            return {
+                no: index + 1,
+                bulan: item.bulan,
+                jumlah: item.jumlah,
+                target: item.target,
+                pencapaian: `${persentase}%`,
+                status: status
+            };
+        });
     }
 
     if (jenis === 'kalender') {
@@ -1781,66 +2172,6 @@ function renderLaporanTable(jenis) {
     tbody.innerHTML = bodyHtml;
 }
 
-function initBarChartLaporan(period) {
-    const ctx = document.getElementById('barChartLaporan').getContext('2d');
-    if (barChartLaporanInstance) barChartLaporanInstance.destroy();
-
-    const data = period === 'monthly' ? getMonthlyData() : yearlyData;
-    const label = period === 'monthly' ? 'Jumlah Pengunjung per Bulan' : 'Jumlah Pengunjung per Tahun';
-    const bgColor = period === 'monthly' ? '#1a237e' : '#ffca28';
-
-    barChartLaporanInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: label,
-                data: data.values,
-                backgroundColor: bgColor,
-                borderColor: period === 'monthly' ? '#0d1445' : '#e6b800',
-                borderWidth: 2,
-                borderRadius: 6,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: true, position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 13 } } }
-            },
-            scales: {
-                y: { beginAtZero: true, grid: { color: '#eee' }, ticks: { font: { size: 12 } } },
-                x: { grid: { display: false }, ticks: { font: { size: 12 } } }
-            }
-        }
-    });
-}
-
-function initPieChartLaporan() {
-    const ctx = document.getElementById('pieChartLaporan').getContext('2d');
-    if (pieChartLaporanInstance) pieChartLaporanInstance.destroy();
-
-    pieChartLaporanInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: kategoriData.labels,
-            datasets: [{
-                data: kategoriData.values,
-                backgroundColor: kategoriData.colors,
-                borderWidth: 3,
-                borderColor: '#fff',
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 13 } } }
-            }
-        }
-    });
-}
-
 function ubahGrafikLaporan(period) {
     currentLaporanPeriod = period;
     document.querySelectorAll('#page-laporan .filter-btn').forEach(btn => {
@@ -1848,6 +2179,7 @@ function ubahGrafikLaporan(period) {
         if (btn.dataset.period === period) btn.classList.add('active');
     });
     initBarChartLaporan(period);
+    initPieChartLaporan();
 }
 
 // ============================================
