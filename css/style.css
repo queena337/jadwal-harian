@@ -270,6 +270,45 @@ body {
     color: #1a237e;
 }
 
+/* ===== GRID 4 JADWAL DI BERANDA ===== */
+.jadwal-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.jadwal-card .table-wrapper {
+    max-height: 180px;
+    overflow-y: auto;
+}
+.jadwal-card .table-wrapper::-webkit-scrollbar {
+    width: 4px;
+}
+.jadwal-card .table-wrapper::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+.jadwal-card .table-wrapper::-webkit-scrollbar-thumb {
+    background: #1a237e;
+    border-radius: 10px;
+}
+
+.jadwal-card table {
+    min-width: unset;
+    font-size: 13px;
+}
+.jadwal-card thead th {
+    background: #f0f2f7;
+    color: #333;
+    padding: 6px 8px;
+    font-size: 12px;
+}
+.jadwal-card tbody td {
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
 /* ===== BUTTON ===== */
 .btn-add {
     background: #1a237e;
@@ -368,26 +407,6 @@ body {
     white-space: nowrap;
 }
 
-/* ===== ROW ===== */
-.row-full {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    margin-bottom: 24px;
-}
-
-.row-2 {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-    margin-bottom: 24px;
-}
-.row-3 {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-}
-
 /* ===== TABEL ===== */
 .table-wrapper {
     overflow-x: auto;
@@ -442,6 +461,97 @@ tbody tr:hover {
     background: #1a237e;
     color: #fff;
     border-color: #1a237e;
+}
+
+/* ===== TAB NAVIGASI ===== */
+.tab-navigation {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eef1f7;
+    padding-bottom: 2px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+    transition: 0.3s;
+    position: relative;
+}
+
+.tab-btn:hover {
+    color: #1a237e;
+    background: #f0f2f7;
+}
+
+.tab-btn.active {
+    color: #1a237e;
+    background: #e8eaf6;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #1a237e;
+    border-radius: 3px 3px 0 0;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ===== MASTER TAB ===== */
+.master-tab {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+.master-tab.active {
+    display: block;
+}
+
+.master-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0f2f7;
+    padding: 4px 12px 4px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    margin: 4px;
+}
+.master-item button {
+    background: #f44336;
+    color: #fff;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+.master-item button:hover {
+    background: #d32f2f;
+    transform: scale(1.1);
 }
 
 /* ===== KALENDER ===== */
@@ -821,6 +931,7 @@ tbody tr:hover {
     border-radius: 8px;
     font-size: 14px;
     transition: 0.2s;
+    width: 100%;
 }
 .form-group input:focus,
 .form-group select:focus {
@@ -842,6 +953,7 @@ tbody tr:hover {
     .btn-filter,
     .btn-export,
     .modal,
+    .tab-navigation,
     #page-dashboard,
     #page-kalender,
     #page-capaian,
@@ -903,6 +1015,12 @@ tbody tr:hover {
         height: 200px !important;
         page-break-inside: avoid;
     }
+    .tab-content {
+        display: block !important;
+    }
+    .tab-content:not(.active) {
+        display: none !important;
+    }
 }
 
 /* ===== RESPONSIVE ===== */
@@ -918,6 +1036,9 @@ tbody tr:hover {
     }
     .filter-laporan {
         grid-template-columns: 1fr 1fr;
+    }
+    .jadwal-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -1021,6 +1142,32 @@ tbody tr:hover {
         font-size: 11px;
         padding: 1px 8px;
     }
+
+    .jadwal-grid-4 {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .jadwal-card .table-wrapper {
+        max-height: 140px;
+    }
+    .jadwal-card table {
+        font-size: 11px;
+    }
+    .jadwal-card thead th,
+    .jadwal-card tbody td {
+        padding: 4px 6px;
+        font-size: 10px;
+    }
+
+    .tab-navigation {
+        gap: 2px;
+    }
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        flex: 1;
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1044,5 +1191,16 @@ tbody tr:hover {
     .calendar-grid-full .day-name {
         font-size: 9px;
         padding: 3px 0;
+    }
+    .tab-btn {
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+    .jadwal-grid-4 {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .jadwal-card .table-wrapper {
+        max-height: 160px;
     }
 }
