@@ -418,6 +418,7 @@
                     <h3>⚙️ Master Data</h3>
                     <button class="modal-close" onclick="closeMasterModal()">×</button>
                 </div>
+
                 <div class="tab-navigation" style="margin-bottom:16px;">
                     <button class="tab-btn active" onclick="switchMasterTab('ruangan')">🏢 Ruangan</button>
                     <button class="tab-btn" onclick="switchMasterTab('tempat')">📍 Tempat</button>
@@ -490,7 +491,7 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- HALAMAN: CAPAIAN -->
+        <!-- HALAMAN: CAPAIAN (Dengan Kategori) -->
         <!-- ========================================== -->
         <div id="page-capaian" class="page-content">
             <div class="row-3" style="margin-bottom:20px;">
@@ -520,10 +521,93 @@
                 </div>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>No</th><th>Bulan</th><th>Jumlah</th><th>Target</th><th>Pencapaian</th><th>Status</th><th>Aksi</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Bulan</th>
+                                <th>Jumlah</th>
+                                <th>Target</th>
+                                <th>Pencapaian</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
                         <tbody id="capaianTableBody"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MODAL CAPAIAN (Dengan Kategori) -->
+        <!-- ========================================== -->
+        <div class="modal" id="capaianModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalCapaianTitle">Tambah Data Capaian</h3>
+                    <button class="modal-close" onclick="closeCapaianModal()">×</button>
+                </div>
+                <form id="capaianForm" onsubmit="saveCapaian(event)">
+                    <input type="hidden" id="capaianIndex" />
+                    
+                    <div class="form-group">
+                        <label>Bulan</label>
+                        <select id="capaianBulan" required>
+                            <option value="Jan">Januari</option>
+                            <option value="Feb">Februari</option>
+                            <option value="Mar">Maret</option>
+                            <option value="Apr">April</option>
+                            <option value="Mei">Mei</option>
+                            <option value="Jun">Juni</option>
+                            <option value="Jul">Juli</option>
+                            <option value="Agu">Agustus</option>
+                            <option value="Sep">September</option>
+                            <option value="Okt">Oktober</option>
+                            <option value="Nov">November</option>
+                            <option value="Des">Desember</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Jumlah Pengunjung</label>
+                        <input type="number" id="capaianJumlah" min="0" required placeholder="Masukkan jumlah pengunjung" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Target</label>
+                        <input type="number" id="capaianTarget" min="0" required placeholder="Masukkan target" />
+                    </div>
+
+                    <!-- ===== KATEGORI PENGUNJUNG ===== -->
+                    <div style="border-top:2px solid #eef1f7;padding-top:12px;margin-top:8px;">
+                        <label style="font-weight:600;color:#1a237e;font-size:14px;display:block;margin-bottom:8px;">📊 Rincian Kategori Pengunjung</label>
+                        <p style="font-size:11px;color:#888;margin-bottom:10px;">💡 Total kategori harus sama dengan Jumlah Pengunjung</p>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:12px;color:#1a237e;">👨‍🎓 Mahasiswa</label>
+                                <input type="number" id="capaianMahasiswa" min="0" placeholder="Jumlah" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;width:100%;" />
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:12px;color:#1a237e;">👨‍🏫 Dosen</label>
+                                <input type="number" id="capaianDosen" min="0" placeholder="Jumlah" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;width:100%;" />
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:12px;color:#1a237e;">👥 Umum</label>
+                                <input type="number" id="capaianUmum" min="0" placeholder="Jumlah" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;width:100%;" />
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="font-size:12px;color:#1a237e;">🏛️ Instansi</label>
+                                <input type="number" id="capaianInstansi" min="0" placeholder="Jumlah" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;width:100%;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="flex-direction:row;gap:10px;margin-top:14px;">
+                        <button type="submit" class="btn-add" style="flex:1;">💾 Simpan</button>
+                        <button type="button" class="btn-delete" id="btnDeleteCapaian" onclick="hapusCapaian()" style="display:none;">🗑️ Hapus</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -684,48 +768,6 @@
                 <div class="form-group" style="flex-direction:row;gap:10px;margin-top:10px;">
                     <button type="submit" class="btn-add" style="flex:1;">💾 Simpan</button>
                     <button type="button" class="btn-delete" id="btnDeleteEvent" onclick="hapusEvent()" style="display:none;">🗑️ Hapus</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ===== MODAL CAPAIAN ===== -->
-    <div class="modal" id="capaianModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalCapaianTitle">Tambah Data Capaian</h3>
-                <button class="modal-close" onclick="closeCapaianModal()">×</button>
-            </div>
-            <form id="capaianForm" onsubmit="saveCapaian(event)">
-                <input type="hidden" id="capaianIndex" />
-                <div class="form-group">
-                    <label>Bulan</label>
-                    <select id="capaianBulan" required>
-                        <option value="Jan">Januari</option>
-                        <option value="Feb">Februari</option>
-                        <option value="Mar">Maret</option>
-                        <option value="Apr">April</option>
-                        <option value="Mei">Mei</option>
-                        <option value="Jun">Juni</option>
-                        <option value="Jul">Juli</option>
-                        <option value="Agu">Agustus</option>
-                        <option value="Sep">September</option>
-                        <option value="Okt">Oktober</option>
-                        <option value="Nov">November</option>
-                        <option value="Des">Desember</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Jumlah Pengunjung</label>
-                    <input type="number" id="capaianJumlah" min="0" required placeholder="Masukkan jumlah pengunjung" />
-                </div>
-                <div class="form-group">
-                    <label>Target</label>
-                    <input type="number" id="capaianTarget" min="0" required placeholder="Masukkan target" />
-                </div>
-                <div class="form-group" style="flex-direction:row;gap:10px;margin-top:10px;">
-                    <button type="submit" class="btn-add" style="flex:1;">💾 Simpan</button>
-                    <button type="button" class="btn-delete" id="btnDeleteCapaian" onclick="hapusCapaian()" style="display:none;">🗑️ Hapus</button>
                 </div>
             </form>
         </div>
