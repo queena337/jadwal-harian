@@ -1,86 +1,53 @@
 // ============================================
-// DATA DENGAN LOCALSTORAGE
+// MASTER DATA
 // ============================================
 
-function simpanSemuaData() {
-    try {
-        localStorage.setItem('jadwalData', JSON.stringify(jadwalData));
-        localStorage.setItem('eventData', JSON.stringify(eventData));
-        localStorage.setItem('capaianData', JSON.stringify(capaianData));
-        localStorage.setItem('nextEventId', String(nextEventId));
-        localStorage.setItem('nextJadwalId', String(nextJadwalId));
-    } catch (e) {
-        console.log('Gagal menyimpan data:', e);
-    }
-}
-
-function muatSemuaData() {
-    try {
-        const savedJadwal = localStorage.getItem('jadwalData');
-        const savedEvent = localStorage.getItem('eventData');
-        const savedCapaian = localStorage.getItem('capaianData');
-        const savedNextEventId = localStorage.getItem('nextEventId');
-        const savedNextJadwalId = localStorage.getItem('nextJadwalId');
-
-        if (savedJadwal) {
-            const parsed = JSON.parse(savedJadwal);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                jadwalData = parsed;
-            }
-        }
-        if (savedEvent) {
-            const parsed = JSON.parse(savedEvent);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                eventData = parsed;
-            }
-        }
-        if (savedCapaian) {
-            const parsed = JSON.parse(savedCapaian);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                capaianData = parsed;
-            }
-        }
-        if (savedNextEventId) {
-            nextEventId = parseInt(savedNextEventId) || 11;
-        }
-        if (savedNextJadwalId) {
-            nextJadwalId = parseInt(savedNextJadwalId) || 8;
-        }
-    } catch (e) {
-        console.log('Gagal memuat data:', e);
-    }
-}
+let masterRuangan = ['R. Meeting 1', 'R. Meeting 2', 'R. VIP', 'Lab. Komputer', 'Aula Utama', 'Training Center', 'Aula Lantai 2'];
+let masterTempat = ['Gedung A Lantai 2', 'Gedung B Lantai 3', 'Gedung C Lantai 2', 'Gedung A Lantai 1', 'Lapangan BRI'];
+let masterPic = ['Budi', 'Siti', 'Andi', 'Dewi', 'Rina', 'Agus'];
+let masterInstansi = ['Mahasiswa', 'Guru', 'Dosen', 'Masyarakat', 'Instansi Pemerintah', 'Perusahaan Swasta', 'Lembaga Non-Profit'];
 
 // ============================================
-// DATA JADWAL
+// DATA JADWAL (4 Jenis)
 // ============================================
-let jadwalData = [
-    { id: 1, kegiatan: 'Rapat Koordinasi', waktu: '08:00 - 09:30', ruangan: 'R. Meeting 1', tempat: 'Gedung A Lantai 2', pic: 'Budi' },
-    { id: 2, kegiatan: 'Workshop UI/UX', waktu: '10:00 - 12:00', ruangan: 'Lab. Komputer', tempat: 'Gedung B Lantai 3', pic: 'Siti' },
-    { id: 3, kegiatan: 'Briefing Tim', waktu: '13:00 - 14:00', ruangan: 'R. Rapat 2', tempat: 'Gedung A Lantai 1', pic: 'Andi' },
-    { id: 4, kegiatan: 'Presentasi Client', waktu: '14:30 - 16:00', ruangan: 'R. VIP', tempat: 'Gedung C Lantai 2', pic: 'Dewi' },
-    { id: 5, kegiatan: 'Evaluasi Bulanan', waktu: '16:30 - 18:00', ruangan: 'R. Meeting 1', tempat: 'Gedung A Lantai 2', pic: 'Budi' },
-    { id: 6, kegiatan: 'Pelatihan Excel', waktu: '09:00 - 11:00', ruangan: 'Lab. Komputer', tempat: 'Gedung B Lantai 3', pic: 'Siti' },
-    { id: 7, kegiatan: 'Meeting Client', waktu: '13:30 - 15:00', ruangan: 'R. VIP', tempat: 'Gedung C Lantai 2', pic: 'Dewi' },
+
+// 1. Data Jadwal Kunjungan
+let kunjunganData = [
+    { id: 1, nama: 'Budi Santoso', instansi: 'PT. Maju Jaya', tanggal: '2026-06-25', waktu: '09:00 - 10:00', tujuan: 'Rapat Kerjasama', pic: 'Andi' },
+    { id: 2, nama: 'Siti Rahayu', instansi: 'Dinas Pendidikan', tanggal: '2026-06-26', waktu: '10:30 - 11:30', tujuan: 'Koordinasi Program', pic: 'Budi' },
+    { id: 3, nama: 'Ahmad Fauzi', instansi: 'Kementerian BUMN', tanggal: '2026-06-27', waktu: '13:00 - 14:30', tujuan: 'Monitoring Proyek', pic: 'Siti' },
 ];
-let nextJadwalId = 8;
+let nextKunjunganId = 4;
+
+// 2. Data Jadwal Pemakaian Ruang
+let ruangData = [
+    { id: 1, kegiatan: 'Rapat Koordinasi', ruangan: 'R. Meeting 1', tanggal: '2026-06-25', waktu: '08:00 - 09:30', kapasitas: 20, pic: 'Budi' },
+    { id: 2, kegiatan: 'Workshop UI/UX', ruangan: 'Lab. Komputer', tanggal: '2026-06-26', waktu: '10:00 - 12:00', kapasitas: 15, pic: 'Siti' },
+    { id: 3, kegiatan: 'Presentasi Client', ruangan: 'R. VIP', tanggal: '2026-06-27', waktu: '14:30 - 16:00', kapasitas: 10, pic: 'Dewi' },
+];
+let nextRuangId = 4;
+
+// 3. Data Jadwal Balai BRI
+let balaiData = [
+    { id: 1, kegiatan: 'Rapat Direksi', jenis: 'Rapat Internal', tanggal: '2026-06-25', waktu: '09:00 - 11:00', ruangan: 'Aula Utama', pic: 'Andi' },
+    { id: 2, kegiatan: 'Pelatihan Karyawan', jenis: 'Pelatihan', tanggal: '2026-06-26', waktu: '13:00 - 16:00', ruangan: 'Training Center', pic: 'Siti' },
+    { id: 3, kegiatan: 'Sosialisasi Program', jenis: 'Sosialisasi', tanggal: '2026-06-27', waktu: '10:00 - 12:00', ruangan: 'Aula Lantai 2', pic: 'Budi' },
+];
+let nextBalaiId = 4;
+
+// 4. Data Jadwal Per Program
+let programData = [
+    { id: 1, program: 'Pemberdayaan UMKM', kegiatan: 'Pelatihan Digital Marketing', tanggal: '2026-06-25', waktu: '09:00 - 12:00', lokasi: 'Aula Utama', pic: 'Dewi' },
+    { id: 2, program: 'Program Kesehatan', kegiatan: 'Screening Kesehatan Gratis', tanggal: '2026-06-26', waktu: '08:00 - 14:00', lokasi: 'Lapangan BRI', pic: 'Andi' },
+    { id: 3, program: 'Program Pendidikan', kegiatan: 'Beasiswa Prestasi', tanggal: '2026-06-27', waktu: '10:00 - 11:30', lokasi: 'R. VIP', pic: 'Siti' },
+];
+let nextProgramId = 4;
 
 // ============================================
 // DATA EVENT KALENDER
 // ============================================
-let eventData = [
-    { id: 1, tanggal: 3, nama: 'Rapat Koordinasi', waktu: '08:00 - 09:30', ruangan: 'R. Meeting 1', tempat: 'Gedung A', pic: 'Budi' },
-    { id: 2, tanggal: 7, nama: 'Workshop UI/UX', waktu: '10:00 - 12:00', ruangan: 'Lab. Komputer', tempat: 'Gedung B', pic: 'Siti' },
-    { id: 3, tanggal: 10, nama: 'Briefing Tim', waktu: '13:00 - 14:00', ruangan: 'R. Rapat 2', tempat: 'Gedung A', pic: 'Andi' },
-    { id: 4, tanggal: 12, nama: 'Presentasi Client', waktu: '14:30 - 16:00', ruangan: 'R. VIP', tempat: 'Gedung C', pic: 'Dewi' },
-    { id: 5, tanggal: 15, nama: 'Evaluasi Bulanan', waktu: '16:30 - 18:00', ruangan: 'R. Meeting 1', tempat: 'Gedung A', pic: 'Budi' },
-    { id: 6, tanggal: 18, nama: 'Pelatihan Excel', waktu: '09:00 - 11:00', ruangan: 'Lab. Komputer', tempat: 'Gedung B', pic: 'Siti' },
-    { id: 7, tanggal: 22, nama: 'Meeting Client', waktu: '13:30 - 15:00', ruangan: 'R. VIP', tempat: 'Gedung C', pic: 'Dewi' },
-    { id: 8, tanggal: 25, nama: 'Rapat Bulanan', waktu: '10:00 - 12:00', ruangan: 'R. Meeting 1', tempat: 'Gedung A', pic: 'Budi' },
-    { id: 9, tanggal: 28, nama: 'Workshop Design', waktu: '14:00 - 16:00', ruangan: 'Lab. Komputer', tempat: 'Gedung B', pic: 'Siti' },
-    { id: 10, tanggal: 30, nama: 'Evaluasi Akhir', waktu: '09:00 - 11:00', ruangan: 'R. VIP', tempat: 'Gedung C', pic: 'Dewi' },
-];
-let nextEventId = 11;
+let eventData = [];
+let nextEventId = 1;
 
 // ============================================
 // DATA CAPAIAN PENGUNJUNG
@@ -122,11 +89,142 @@ const kategoriData = {
 };
 
 // ============================================
-// NAVIGASI
+// LOCALSTORAGE
 // ============================================
-function navigateTo(page) {
-    const link = document.querySelector(`.menu a[data-page="${page}"]`);
-    if (link) link.click();
+function simpanSemuaData() {
+    try {
+        localStorage.setItem('masterRuangan', JSON.stringify(masterRuangan));
+        localStorage.setItem('masterTempat', JSON.stringify(masterTempat));
+        localStorage.setItem('masterPic', JSON.stringify(masterPic));
+        localStorage.setItem('masterInstansi', JSON.stringify(masterInstansi));
+        localStorage.setItem('kunjunganData', JSON.stringify(kunjunganData));
+        localStorage.setItem('ruangData', JSON.stringify(ruangData));
+        localStorage.setItem('balaiData', JSON.stringify(balaiData));
+        localStorage.setItem('programData', JSON.stringify(programData));
+        localStorage.setItem('eventData', JSON.stringify(eventData));
+        localStorage.setItem('capaianData', JSON.stringify(capaianData));
+        localStorage.setItem('nextKunjunganId', String(nextKunjunganId));
+        localStorage.setItem('nextRuangId', String(nextRuangId));
+        localStorage.setItem('nextBalaiId', String(nextBalaiId));
+        localStorage.setItem('nextProgramId', String(nextProgramId));
+        localStorage.setItem('nextEventId', String(nextEventId));
+    } catch (e) {
+        console.log('Gagal menyimpan data:', e);
+    }
+}
+
+function muatSemuaData() {
+    try {
+        const savedRuangan = localStorage.getItem('masterRuangan');
+        const savedTempat = localStorage.getItem('masterTempat');
+        const savedPic = localStorage.getItem('masterPic');
+        const savedInstansi = localStorage.getItem('masterInstansi');
+        const savedKunjungan = localStorage.getItem('kunjunganData');
+        const savedRuang = localStorage.getItem('ruangData');
+        const savedBalai = localStorage.getItem('balaiData');
+        const savedProgram = localStorage.getItem('programData');
+        const savedEvent = localStorage.getItem('eventData');
+        const savedCapaian = localStorage.getItem('capaianData');
+        const savedNextKunjunganId = localStorage.getItem('nextKunjunganId');
+        const savedNextRuangId = localStorage.getItem('nextRuangId');
+        const savedNextBalaiId = localStorage.getItem('nextBalaiId');
+        const savedNextProgramId = localStorage.getItem('nextProgramId');
+        const savedNextEventId = localStorage.getItem('nextEventId');
+
+        if (savedRuangan) masterRuangan = JSON.parse(savedRuangan);
+        if (savedTempat) masterTempat = JSON.parse(savedTempat);
+        if (savedPic) masterPic = JSON.parse(savedPic);
+        if (savedInstansi) masterInstansi = JSON.parse(savedInstansi);
+        if (savedKunjungan) kunjunganData = JSON.parse(savedKunjungan);
+        if (savedRuang) ruangData = JSON.parse(savedRuang);
+        if (savedBalai) balaiData = JSON.parse(savedBalai);
+        if (savedProgram) programData = JSON.parse(savedProgram);
+        if (savedEvent) eventData = JSON.parse(savedEvent);
+        if (savedCapaian) capaianData = JSON.parse(savedCapaian);
+        if (savedNextKunjunganId) nextKunjunganId = parseInt(savedNextKunjunganId) || 4;
+        if (savedNextRuangId) nextRuangId = parseInt(savedNextRuangId) || 4;
+        if (savedNextBalaiId) nextBalaiId = parseInt(savedNextBalaiId) || 4;
+        if (savedNextProgramId) nextProgramId = parseInt(savedNextProgramId) || 4;
+        if (savedNextEventId) nextEventId = parseInt(savedNextEventId) || 1;
+    } catch (e) {
+        console.log('Gagal memuat data:', e);
+    }
+}
+
+// ============================================
+// SINKRONISASI JADWAL KE KALENDER
+// ============================================
+function sinkronkanJadwalKeKalender() {
+    eventData = eventData.filter(e => !e.dariJadwal);
+
+    kunjunganData.forEach(item => {
+        const tanggal = parseInt(item.tanggal.split('-')[2]) || 1;
+        eventData.push({
+            id: nextEventId++,
+            tanggal: tanggal,
+            nama: `📋 ${item.nama}`,
+            waktu: item.waktu,
+            ruangan: item.ruangan || '-',
+            tempat: item.instansi || '-',
+            pic: item.pic,
+            dariJadwal: true,
+            sumber: 'Kunjungan',
+            sumberId: item.id
+        });
+    });
+
+    ruangData.forEach(item => {
+        const tanggal = parseInt(item.tanggal.split('-')[2]) || 1;
+        eventData.push({
+            id: nextEventId++,
+            tanggal: tanggal,
+            nama: `🏢 ${item.kegiatan}`,
+            waktu: item.waktu,
+            ruangan: item.ruangan,
+            tempat: item.ruangan,
+            pic: item.pic,
+            dariJadwal: true,
+            sumber: 'Pemakaian Ruang',
+            sumberId: item.id
+        });
+    });
+
+    balaiData.forEach(item => {
+        const tanggal = parseInt(item.tanggal.split('-')[2]) || 1;
+        eventData.push({
+            id: nextEventId++,
+            tanggal: tanggal,
+            nama: `🏛️ ${item.kegiatan}`,
+            waktu: item.waktu,
+            ruangan: item.ruangan,
+            tempat: item.ruangan,
+            pic: item.pic,
+            dariJadwal: true,
+            sumber: 'Balai BRI',
+            sumberId: item.id
+        });
+    });
+
+    programData.forEach(item => {
+        const tanggal = parseInt(item.tanggal.split('-')[2]) || 1;
+        eventData.push({
+            id: nextEventId++,
+            tanggal: tanggal,
+            nama: `📊 ${item.program}`,
+            waktu: item.waktu,
+            ruangan: item.lokasi || '-',
+            tempat: item.lokasi || '-',
+            pic: item.pic,
+            dariJadwal: true,
+            sumber: 'Per Program',
+            sumberId: item.id
+        });
+    });
+
+    renderCalendar(currentMonth, currentYear);
+    renderCalendarFull(currentMonthFull, currentYearFull);
+    renderDashboardEvents();
+    simpanSemuaData();
 }
 
 // ============================================
@@ -197,6 +295,18 @@ const pageTitles = {
     pengaturan: { title: 'Pengaturan', subtitle: 'Konfigurasi sistem' },
 };
 
+function switchMenu(page) {
+    const link = document.querySelector(`.menu a[data-page="${page}"]`);
+    if (link) link.click();
+}
+
+function switchTab(tab) {
+    setTimeout(() => {
+        const tabBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+        if (tabBtn) tabBtn.click();
+    }, 200);
+}
+
 document.querySelectorAll('.menu a').forEach(link => {
     link.addEventListener('click', function(e) {
         e.preventDefault();
@@ -228,77 +338,697 @@ document.querySelectorAll('.menu a').forEach(link => {
                 renderCalendarFull(currentMonthFull, currentYearFull);
             }, 100);
         }
-        if (page === 'jadwal') renderJadwalFull();
+        if (page === 'jadwal') {
+            renderKunjunganTable();
+            renderRuangTable();
+            renderBalaiTable();
+            renderProgramTable();
+            updateDropdowns();
+        }
         if (page === 'laporan') setTimeout(generateLaporan, 100);
     });
 });
 
 // ============================================
-// JADWAL CRUD
+// FUNGSI UPDATE DROPDOWN
 // ============================================
-function tambahJadwal() {
-    const kegiatan = prompt('Masukkan nama kegiatan:');
-    if (!kegiatan) return;
-    const waktu = prompt('Masukkan waktu (contoh: 09:00 - 10:00):');
-    if (!waktu) return;
-    const ruangan = prompt('Masukkan ruangan:');
-    if (!ruangan) return;
-    const tempat = prompt('Masukkan tempat:');
-    if (!tempat) return;
-    const pic = prompt('Masukkan PIC:');
-    if (!pic) return;
+function updateDropdowns() {
+    const ruanganSelects = document.querySelectorAll('#fRuangan, #eventRuangan');
+    ruanganSelects.forEach(select => {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">Pilih Ruangan</option>';
+        masterRuangan.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item;
+            opt.textContent = item;
+            select.appendChild(opt);
+        });
+        if (currentVal && masterRuangan.includes(currentVal)) {
+            select.value = currentVal;
+        }
+    });
 
-    jadwalData.push({ id: nextJadwalId++, kegiatan, waktu, ruangan, tempat, pic });
+    const tempatSelects = document.querySelectorAll('#fTempat, #eventTempat');
+    tempatSelects.forEach(select => {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">Pilih Tempat</option>';
+        masterTempat.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item;
+            opt.textContent = item;
+            select.appendChild(opt);
+        });
+        if (currentVal && masterTempat.includes(currentVal)) {
+            select.value = currentVal;
+        }
+    });
 
-    renderJadwal();
-    renderJadwalFull();
-    updateStats();
-    simpanSemuaData();
-    alert('✅ Jadwal berhasil ditambahkan!');
+    const picSelects = document.querySelectorAll('#fPic, #eventPic');
+    picSelects.forEach(select => {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">Pilih PIC</option>';
+        masterPic.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item;
+            opt.textContent = item;
+            select.appendChild(opt);
+        });
+        if (currentVal && masterPic.includes(currentVal)) {
+            select.value = currentVal;
+        }
+    });
+
+    const instansiSelects = document.querySelectorAll('#fInstansi');
+    instansiSelects.forEach(select => {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">Pilih Instansi</option>';
+        masterInstansi.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item;
+            opt.textContent = item;
+            select.appendChild(opt);
+        });
+        if (currentVal && masterInstansi.includes(currentVal)) {
+            select.value = currentVal;
+        }
+    });
 }
 
-function hapusJadwal(id) {
-    if (confirm('Yakin ingin menghapus jadwal ini?')) {
-        jadwalData = jadwalData.filter(j => j.id !== id);
-        renderJadwal();
-        renderJadwalFull();
-        updateStats();
-        simpanSemuaData();
-        alert('✅ Jadwal berhasil dihapus!');
+// ============================================
+// TAB NAVIGASI JADWAL
+// ============================================
+let currentTab = 'kunjungan';
+
+function switchTab(tab) {
+    currentTab = tab;
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.tab === tab) {
+            btn.classList.add('active');
+        }
+    });
+
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`tab-${tab}`).classList.add('active');
+
+    renderJadwalTab(tab);
+}
+
+function renderJadwalTab(tab) {
+    switch(tab) {
+        case 'kunjungan':
+            renderKunjunganTable();
+            break;
+        case 'ruang':
+            renderRuangTable();
+            break;
+        case 'balai':
+            renderBalaiTable();
+            break;
+        case 'program':
+            renderProgramTable();
+            break;
+        default:
+            break;
     }
 }
 
-function renderJadwal() {
-    const tbody = document.getElementById('jadwalTableBody');
-    tbody.innerHTML = jadwalData.slice(0, 5).map((item, index) => `
+// ============================================
+// RENDER TABEL KUNJUNGAN
+// ============================================
+function renderKunjunganTable() {
+    const tbody = document.getElementById('kunjunganTableBody');
+    tbody.innerHTML = kunjunganData.map((item, index) => `
         <tr>
             <td>${index + 1}</td>
-            <td><strong>${item.kegiatan}</strong></td>
+            <td><strong>${item.nama}</strong></td>
+            <td>${item.instansi}</td>
+            <td>${item.tanggal}</td>
             <td>${item.waktu}</td>
-            <td>${item.ruangan}</td>
-            <td>${item.tempat}</td>
-            <td>${item.pic}</td>
-        </tr>
-    `).join('');
-}
-
-function renderJadwalFull() {
-    const tbody = document.getElementById('jadwalFullTable');
-    tbody.innerHTML = jadwalData.map((item, index) => `
-        <tr>
-            <td>${index + 1}</td>
-            <td><strong>${item.kegiatan}</strong></td>
-            <td>${item.waktu}</td>
-            <td>${item.ruangan}</td>
-            <td>${item.tempat}</td>
+            <td>${item.tujuan}</td>
             <td>${item.pic}</td>
             <td>
-                <button onclick="hapusJadwal(${item.id})" style="background:#f44336;color:#fff;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;">Hapus</button>
+                <button class="btn-edit" onclick="editJadwal('kunjungan', ${item.id})">✏️</button>
+                <button style="background:#f44336;color:#fff;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;" onclick="hapusJadwal('kunjungan', ${item.id})">🗑️</button>
             </td>
         </tr>
     `).join('');
 }
 
+// ============================================
+// RENDER TABEL PEMAKAIAN RUANG
+// ============================================
+function renderRuangTable() {
+    const tbody = document.getElementById('ruangTableBody');
+    tbody.innerHTML = ruangData.map((item, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td><strong>${item.kegiatan}</strong></td>
+            <td>${item.ruangan}</td>
+            <td>${item.tanggal}</td>
+            <td>${item.waktu}</td>
+            <td>${item.kapasitas} orang</td>
+            <td>${item.pic}</td>
+            <td>
+                <button class="btn-edit" onclick="editJadwal('ruang', ${item.id})">✏️</button>
+                <button style="background:#f44336;color:#fff;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;" onclick="hapusJadwal('ruang', ${item.id})">🗑️</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ============================================
+// RENDER TABEL BALAI BRI
+// ============================================
+function renderBalaiTable() {
+    const tbody = document.getElementById('balaiTableBody');
+    tbody.innerHTML = balaiData.map((item, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td><strong>${item.kegiatan}</strong></td>
+            <td>${item.jenis}</td>
+            <td>${item.tanggal}</td>
+            <td>${item.waktu}</td>
+            <td>${item.ruangan}</td>
+            <td>${item.pic}</td>
+            <td>
+                <button class="btn-edit" onclick="editJadwal('balai', ${item.id})">✏️</button>
+                <button style="background:#f44336;color:#fff;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;" onclick="hapusJadwal('balai', ${item.id})">🗑️</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ============================================
+// RENDER TABEL PER PROGRAM
+// ============================================
+function renderProgramTable() {
+    const tbody = document.getElementById('programTableBody');
+    tbody.innerHTML = programData.map((item, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td><strong>${item.program}</strong></td>
+            <td>${item.kegiatan}</td>
+            <td>${item.tanggal}</td>
+            <td>${item.waktu}</td>
+            <td>${item.lokasi}</td>
+            <td>${item.pic}</td>
+            <td>
+                <button class="btn-edit" onclick="editJadwal('program', ${item.id})">✏️</button>
+                <button style="background:#f44336;color:#fff;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;" onclick="hapusJadwal('program', ${item.id})">🗑️</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ============================================
+// RINGKASAN 4 JADWAL DI BERANDA
+// ============================================
+function renderRingkasanJadwal() {
+    const today = new Date().toISOString().split('T')[0];
+
+    const kunjunganHariIni = kunjunganData.filter(item => item.tanggal === today).slice(0, 5);
+    const tbodyKunjungan = document.getElementById('ringkasanKunjungan');
+    if (kunjunganHariIni.length === 0) {
+        tbodyKunjungan.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#888;padding:10px;">Tidak ada kunjungan</td></tr>`;
+    } else {
+        tbodyKunjungan.innerHTML = kunjunganHariIni.map((item, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td><strong>${item.nama}</strong></td>
+                <td>${item.waktu}</td>
+                <td>${item.pic}</td>
+            </tr>
+        `).join('');
+    }
+
+    const ruangHariIni = ruangData.filter(item => item.tanggal === today).slice(0, 5);
+    const tbodyRuang = document.getElementById('ringkasanRuang');
+    if (ruangHariIni.length === 0) {
+        tbodyRuang.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#888;padding:10px;">Tidak ada pemakaian ruang</td></tr>`;
+    } else {
+        tbodyRuang.innerHTML = ruangHariIni.map((item, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td><strong>${item.kegiatan}</strong></td>
+                <td>${item.waktu}</td>
+                <td>${item.ruangan}</td>
+            </tr>
+        `).join('');
+    }
+
+    const balaiHariIni = balaiData.filter(item => item.tanggal === today).slice(0, 5);
+    const tbodyBalai = document.getElementById('ringkasanBalai');
+    if (balaiHariIni.length === 0) {
+        tbodyBalai.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#888;padding:10px;">Tidak ada kegiatan Balai BRI</td></tr>`;
+    } else {
+        tbodyBalai.innerHTML = balaiHariIni.map((item, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td><strong>${item.kegiatan}</strong></td>
+                <td>${item.waktu}</td>
+                <td>${item.ruangan}</td>
+            </tr>
+        `).join('');
+    }
+
+    const programHariIni = programData.filter(item => item.tanggal === today).slice(0, 5);
+    const tbodyProgram = document.getElementById('ringkasanProgram');
+    if (programHariIni.length === 0) {
+        tbodyProgram.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#888;padding:10px;">Tidak ada kegiatan program</td></tr>`;
+    } else {
+        tbodyProgram.innerHTML = programHariIni.map((item, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td><strong>${item.program}</strong></td>
+                <td>${item.waktu}</td>
+                <td>${item.lokasi}</td>
+            </tr>
+        `).join('');
+    }
+}
+
+// ============================================
+// CRUD JADWAL (UMUM)
+// ============================================
+function tambahJadwal() {
+    document.getElementById('modalJadwalTitle').textContent = 'Tambah Jadwal';
+    document.getElementById('jadwalId').value = '';
+    document.getElementById('btnDeleteJadwal').style.display = 'none';
+
+    document.getElementById('fNamaTamu').value = '';
+    document.getElementById('fInstansi').value = '';
+    document.getElementById('fTujuan').value = '';
+    document.getElementById('fKegiatanRuang').value = '';
+    document.getElementById('fKapasitas').value = '';
+    document.getElementById('fKegiatanBalai').value = '';
+    document.getElementById('fJenisKegiatan').value = '';
+    document.getElementById('fNamaProgram').value = '';
+    document.getElementById('fKegiatanProgram').value = '';
+    document.getElementById('fTanggal').value = new Date().toISOString().split('T')[0];
+    document.getElementById('fWaktu').value = '';
+    document.getElementById('fRuangan').value = '';
+    document.getElementById('fTempat').value = '';
+    document.getElementById('fPic').value = '';
+
+    updateDropdowns();
+    ubahFormJadwal();
+    document.getElementById('jadwalModal').classList.add('active');
+}
+
+function editJadwal(jenis, id) {
+    let data, title;
+    switch(jenis) {
+        case 'kunjungan':
+            data = kunjunganData.find(d => d.id === id);
+            title = 'Edit Jadwal Kunjungan';
+            document.getElementById('formJenis').value = 'kunjungan';
+            document.getElementById('fNamaTamu').value = data.nama;
+            document.getElementById('fInstansi').value = data.instansi;
+            document.getElementById('fTujuan').value = data.tujuan;
+            break;
+        case 'ruang':
+            data = ruangData.find(d => d.id === id);
+            title = 'Edit Jadwal Pemakaian Ruang';
+            document.getElementById('formJenis').value = 'ruang';
+            document.getElementById('fKegiatanRuang').value = data.kegiatan;
+            document.getElementById('fKapasitas').value = data.kapasitas;
+            break;
+        case 'balai':
+            data = balaiData.find(d => d.id === id);
+            title = 'Edit Jadwal Balai BRI';
+            document.getElementById('formJenis').value = 'balai';
+            document.getElementById('fKegiatanBalai').value = data.kegiatan;
+            document.getElementById('fJenisKegiatan').value = data.jenis;
+            break;
+        case 'program':
+            data = programData.find(d => d.id === id);
+            title = 'Edit Jadwal Per Program';
+            document.getElementById('formJenis').value = 'program';
+            document.getElementById('fNamaProgram').value = data.program;
+            document.getElementById('fKegiatanProgram').value = data.kegiatan;
+            break;
+        default:
+            return;
+    }
+
+    document.getElementById('modalJadwalTitle').textContent = title;
+    document.getElementById('jadwalId').value = id;
+    document.getElementById('jadwalJenis').value = jenis;
+    document.getElementById('fTanggal').value = data.tanggal;
+    document.getElementById('fWaktu').value = data.waktu;
+    document.getElementById('fRuangan').value = data.ruangan || data.lokasi || '';
+    document.getElementById('fTempat').value = data.tempat || data.lokasi || '';
+    document.getElementById('fPic').value = data.pic;
+    document.getElementById('btnDeleteJadwal').style.display = 'inline-block';
+
+    updateDropdowns();
+    ubahFormJadwal();
+    document.getElementById('jadwalModal').classList.add('active');
+}
+
+function saveJadwal(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('jadwalId').value;
+    const jenis = document.getElementById('formJenis').value;
+    const tanggal = document.getElementById('fTanggal').value;
+    const waktu = document.getElementById('fWaktu').value;
+    const ruangan = document.getElementById('fRuangan').value;
+    const tempat = document.getElementById('fTempat').value;
+    const pic = document.getElementById('fPic').value;
+
+    if (!tanggal || !waktu || !ruangan || !pic) {
+        alert('⚠️ Semua field wajib diisi!');
+        return;
+    }
+
+    let dataBaru;
+
+    switch(jenis) {
+        case 'kunjungan':
+            const nama = document.getElementById('fNamaTamu').value;
+            const instansi = document.getElementById('fInstansi').value;
+            const tujuan = document.getElementById('fTujuan').value;
+            if (!nama || !instansi || !tujuan) {
+                alert('⚠️ Semua field wajib diisi!');
+                return;
+            }
+            dataBaru = { nama, instansi, tanggal, waktu, tujuan, ruangan, pic };
+            if (id) {
+                const index = kunjunganData.findIndex(d => d.id === parseInt(id));
+                kunjunganData[index] = { ...kunjunganData[index], ...dataBaru };
+                alert('✅ Jadwal kunjungan berhasil diupdate!');
+            } else {
+                kunjunganData.push({ id: nextKunjunganId++, ...dataBaru });
+                alert('✅ Jadwal kunjungan berhasil ditambahkan!');
+            }
+            renderKunjunganTable();
+            break;
+        case 'ruang':
+            const kegiatanRuang = document.getElementById('fKegiatanRuang').value;
+            const kapasitas = document.getElementById('fKapasitas').value;
+            if (!kegiatanRuang || !kapasitas) {
+                alert('⚠️ Semua field wajib diisi!');
+                return;
+            }
+            dataBaru = { kegiatan: kegiatanRuang, ruangan, tanggal, waktu, kapasitas: parseInt(kapasitas), pic };
+            if (id) {
+                const index = ruangData.findIndex(d => d.id === parseInt(id));
+                ruangData[index] = { ...ruangData[index], ...dataBaru };
+                alert('✅ Jadwal pemakaian ruang berhasil diupdate!');
+            } else {
+                ruangData.push({ id: nextRuangId++, ...dataBaru });
+                alert('✅ Jadwal pemakaian ruang berhasil ditambahkan!');
+            }
+            renderRuangTable();
+            break;
+        case 'balai':
+            const kegiatanBalai = document.getElementById('fKegiatanBalai').value;
+            const jenisKegiatan = document.getElementById('fJenisKegiatan').value;
+            if (!kegiatanBalai || !jenisKegiatan) {
+                alert('⚠️ Semua field wajib diisi!');
+                return;
+            }
+            dataBaru = { kegiatan: kegiatanBalai, jenis: jenisKegiatan, ruangan, tanggal, waktu, pic };
+            if (id) {
+                const index = balaiData.findIndex(d => d.id === parseInt(id));
+                balaiData[index] = { ...balaiData[index], ...dataBaru };
+                alert('✅ Jadwal Balai BRI berhasil diupdate!');
+            } else {
+                balaiData.push({ id: nextBalaiId++, ...dataBaru });
+                alert('✅ Jadwal Balai BRI berhasil ditambahkan!');
+            }
+            renderBalaiTable();
+            break;
+        case 'program':
+            const namaProgram = document.getElementById('fNamaProgram').value;
+            const kegiatanProgram = document.getElementById('fKegiatanProgram').value;
+            if (!namaProgram || !kegiatanProgram) {
+                alert('⚠️ Semua field wajib diisi!');
+                return;
+            }
+            dataBaru = { program: namaProgram, kegiatan: kegiatanProgram, tanggal, waktu, lokasi: ruangan, pic };
+            if (id) {
+                const index = programData.findIndex(d => d.id === parseInt(id));
+                programData[index] = { ...programData[index], ...dataBaru };
+                alert('✅ Jadwal per program berhasil diupdate!');
+            } else {
+                programData.push({ id: nextProgramId++, ...dataBaru });
+                alert('✅ Jadwal per program berhasil ditambahkan!');
+            }
+            renderProgramTable();
+            break;
+        default:
+            return;
+    }
+
+    renderRingkasanJadwal();
+    updateStats();
+    sinkronkanJadwalKeKalender();
+    simpanSemuaData();
+    closeJadwalModal();
+}
+
+function hapusJadwal(jenis, id) {
+    if (confirm('Yakin ingin menghapus jadwal ini?')) {
+        switch(jenis) {
+            case 'kunjungan':
+                kunjunganData = kunjunganData.filter(d => d.id !== id);
+                renderKunjunganTable();
+                break;
+            case 'ruang':
+                ruangData = ruangData.filter(d => d.id !== id);
+                renderRuangTable();
+                break;
+            case 'balai':
+                balaiData = balaiData.filter(d => d.id !== id);
+                renderBalaiTable();
+                break;
+            case 'program':
+                programData = programData.filter(d => d.id !== id);
+                renderProgramTable();
+                break;
+            default:
+                return;
+        }
+        renderRingkasanJadwal();
+        updateStats();
+        sinkronkanJadwalKeKalender();
+        simpanSemuaData();
+        alert('✅ Jadwal berhasil dihapus!');
+    }
+}
+
+function hapusJadwalFromModal() {
+    const id = document.getElementById('jadwalId').value;
+    const jenis = document.getElementById('jadwalJenis').value || document.getElementById('formJenis').value;
+    if (!id) return;
+    if (confirm('Yakin ingin menghapus jadwal ini?')) {
+        hapusJadwal(jenis, parseInt(id));
+        closeJadwalModal();
+    }
+}
+
+function closeJadwalModal() {
+    document.getElementById('jadwalModal').classList.remove('active');
+}
+
+function ubahFormJadwal() {
+    const jenis = document.getElementById('formJenis').value;
+    document.getElementById('fieldKunjungan').style.display = jenis === 'kunjungan' ? 'block' : 'none';
+    document.getElementById('fieldRuang').style.display = jenis === 'ruang' ? 'block' : 'none';
+    document.getElementById('fieldBalai').style.display = jenis === 'balai' ? 'block' : 'none';
+    document.getElementById('fieldProgram').style.display = jenis === 'program' ? 'block' : 'none';
+}
+
+// ============================================
+// FUNGSI TAMBAH MASTER CEPAT (DARI FORM)
+// ============================================
+
+function tambahMasterRuanganCepat() {
+    const val = prompt('Masukkan nama ruangan baru:');
+    if (!val) return;
+    if (masterRuangan.includes(val)) { alert('Ruangan sudah ada!'); return; }
+    masterRuangan.push(val);
+    updateDropdowns();
+    renderMasterData();
+    simpanSemuaData();
+    alert('✅ Ruangan berhasil ditambahkan!');
+}
+
+function tambahMasterTempatCepat() {
+    const val = prompt('Masukkan nama tempat baru:');
+    if (!val) return;
+    if (masterTempat.includes(val)) { alert('Tempat sudah ada!'); return; }
+    masterTempat.push(val);
+    updateDropdowns();
+    renderMasterData();
+    simpanSemuaData();
+    alert('✅ Tempat berhasil ditambahkan!');
+}
+
+function tambahMasterPicCepat() {
+    const val = prompt('Masukkan nama PIC baru:');
+    if (!val) return;
+    if (masterPic.includes(val)) { alert('PIC sudah ada!'); return; }
+    masterPic.push(val);
+    updateDropdowns();
+    renderMasterData();
+    simpanSemuaData();
+    alert('✅ PIC berhasil ditambahkan!');
+}
+
+function tambahMasterInstansiCepat() {
+    const val = prompt('Masukkan nama instansi baru:');
+    if (!val) return;
+    if (masterInstansi.includes(val)) { alert('Instansi sudah ada!'); return; }
+    masterInstansi.push(val);
+    updateDropdowns();
+    renderMasterData();
+    simpanSemuaData();
+    alert('✅ Instansi berhasil ditambahkan!');
+}
+
+// ============================================
+// MASTER DATA CRUD
+// ============================================
+function bukaMasterData() {
+    document.getElementById('masterModal').classList.add('active');
+    renderMasterData();
+}
+
+function closeMasterModal() {
+    document.getElementById('masterModal').classList.remove('active');
+}
+
+let currentMasterTab = 'ruangan';
+
+function switchMasterTab(tab) {
+    currentMasterTab = tab;
+    document.querySelectorAll('.master-tab').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#masterModal .tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(`master-${tab}`).classList.add('active');
+    document.querySelector(`#masterModal .tab-btn[onclick="switchMasterTab('${tab}')"]`).classList.add('active');
+    renderMasterData();
+}
+
+function renderMasterData() {
+    const listRuangan = document.getElementById('listRuangan');
+    listRuangan.innerHTML = masterRuangan.map(item => `
+        <span class="master-item">
+            ${item}
+            <button onclick="hapusMaster('ruangan', '${item}')">✕</button>
+        </span>
+    `).join('');
+
+    const listTempat = document.getElementById('listTempat');
+    listTempat.innerHTML = masterTempat.map(item => `
+        <span class="master-item">
+            ${item}
+            <button onclick="hapusMaster('tempat', '${item}')">✕</button>
+        </span>
+    `).join('');
+
+    const listPic = document.getElementById('listPic');
+    listPic.innerHTML = masterPic.map(item => `
+        <span class="master-item">
+            ${item}
+            <button onclick="hapusMaster('pic', '${item}')">✕</button>
+        </span>
+    `).join('');
+
+    const listInstansi = document.getElementById('listInstansi');
+    if (listInstansi) {
+        listInstansi.innerHTML = masterInstansi.map(item => `
+            <span class="master-item">
+                ${item}
+                <button onclick="hapusMaster('instansi', '${item}')">✕</button>
+            </span>
+        `).join('');
+    }
+}
+
+function tambahMasterRuangan() {
+    const input = document.getElementById('inputRuangan');
+    const val = input.value.trim();
+    if (!val) { alert('Masukkan nama ruangan!'); return; }
+    if (masterRuangan.includes(val)) { alert('Ruangan sudah ada!'); return; }
+    masterRuangan.push(val);
+    input.value = '';
+    renderMasterData();
+    updateDropdowns();
+    simpanSemuaData();
+    alert('✅ Ruangan berhasil ditambahkan!');
+}
+
+function tambahMasterTempat() {
+    const input = document.getElementById('inputTempat');
+    const val = input.value.trim();
+    if (!val) { alert('Masukkan nama tempat!'); return; }
+    if (masterTempat.includes(val)) { alert('Tempat sudah ada!'); return; }
+    masterTempat.push(val);
+    input.value = '';
+    renderMasterData();
+    updateDropdowns();
+    simpanSemuaData();
+    alert('✅ Tempat berhasil ditambahkan!');
+}
+
+function tambahMasterPic() {
+    const input = document.getElementById('inputPic');
+    const val = input.value.trim();
+    if (!val) { alert('Masukkan nama PIC!'); return; }
+    if (masterPic.includes(val)) { alert('PIC sudah ada!'); return; }
+    masterPic.push(val);
+    input.value = '';
+    renderMasterData();
+    updateDropdowns();
+    simpanSemuaData();
+    alert('✅ PIC berhasil ditambahkan!');
+}
+
+function tambahMasterInstansi() {
+    const input = document.getElementById('inputInstansi');
+    const val = input.value.trim();
+    if (!val) { alert('Masukkan nama instansi!'); return; }
+    if (masterInstansi.includes(val)) { alert('Instansi sudah ada!'); return; }
+    masterInstansi.push(val);
+    input.value = '';
+    renderMasterData();
+    updateDropdowns();
+    simpanSemuaData();
+    alert('✅ Instansi berhasil ditambahkan!');
+}
+
+function hapusMaster(jenis, value) {
+    if (!confirm(`Hapus "${value}" dari master ${jenis}?`)) return;
+    switch(jenis) {
+        case 'ruangan':
+            masterRuangan = masterRuangan.filter(item => item !== value);
+            break;
+        case 'tempat':
+            masterTempat = masterTempat.filter(item => item !== value);
+            break;
+        case 'pic':
+            masterPic = masterPic.filter(item => item !== value);
+            break;
+        case 'instansi':
+            masterInstansi = masterInstansi.filter(item => item !== value);
+            break;
+    }
+    renderMasterData();
+    updateDropdowns();
+    simpanSemuaData();
+    alert('✅ Data master berhasil dihapus!');
+}
+
+// ============================================
+// PRINT JADWAL
+// ============================================
 function printJadwal() {
     const now = new Date();
     document.getElementById('printDate').textContent = now.toLocaleDateString('id-ID', {
@@ -309,19 +1039,16 @@ function printJadwal() {
 }
 
 // ============================================
-// DASHBOARD EVENT LIST (READ ONLY) - TAMPILKAN SEMUA
+// DASHBOARD EVENT LIST
 // ============================================
-
 function renderDashboardEvents() {
     const container = document.getElementById('dashboardEventList');
     const badge = document.getElementById('eventCountBadge');
     if (!container) return;
 
-    // Urutkan berdasarkan tanggal
     const sortedEvents = [...eventData].sort((a, b) => a.tanggal - b.tanggal);
     const totalEvents = sortedEvents.length;
 
-    // Update badge
     if (badge) {
         badge.textContent = `${totalEvents} Kegiatan`;
     }
@@ -351,7 +1078,7 @@ function renderDashboardEvents() {
 }
 
 // ============================================
-// KALENDER DASHBOARD (Mini)
+// KALENDER DASHBOARD
 // ============================================
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
@@ -390,8 +1117,6 @@ function renderCalendar(month, year) {
     }
 
     grid.innerHTML = html;
-
-    // Update daftar kegiatan di beranda
     renderDashboardEvents();
 }
 
@@ -410,7 +1135,7 @@ document.getElementById('nextMonth').addEventListener('click', () => {
 });
 
 // ============================================
-// KALENDER FULL (Halaman Kalender) - CRUD
+// KALENDER FULL
 // ============================================
 let currentMonthFull = new Date().getMonth();
 let currentYearFull = new Date().getFullYear();
@@ -450,8 +1175,6 @@ function renderCalendarFull(month, year) {
 
     grid.innerHTML = html;
     showEventDetail(null);
-
-    // Update daftar kegiatan di beranda
     renderDashboardEvents();
 }
 
@@ -477,16 +1200,19 @@ function showEventDetail(tanggal) {
         <div style="padding:8px 12px;background:#fff;border-radius:8px;margin-bottom:6px;border-left:4px solid #1a237e;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
             <div>
                 <strong>${e.nama}</strong> - ${e.waktu} (${e.ruangan}) - PIC: ${e.pic}
+                ${e.dariJadwal ? '<span style="font-size:10px;color:#888;margin-left:8px;">📌 dari Jadwal</span>' : ''}
             </div>
             <div style="display:flex;gap:6px;">
-                <button class="btn-edit" onclick="editEvent(${e.id})">✏️ Edit</button>
-                <button style="background:#f44336;color:#fff;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;" onclick="hapusEventById(${e.id})">🗑️</button>
+                ${e.dariJadwal ? 
+                    `<button class="btn-edit" onclick="alert('Event ini berasal dari jadwal ${e.sumber}. Edit di halaman Jadwal.')">🔗 Lihat Sumber</button>` :
+                    `<button class="btn-edit" onclick="editEvent(${e.id})">✏️ Edit</button>
+                    <button style="background:#f44336;color:#fff;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;" onclick="hapusEventById(${e.id})">🗑️</button>`
+                }
             </div>
         </div>
     `).join('');
 }
 
-// ===== TAMBAH EVENT =====
 function tambahEvent() {
     document.getElementById('modalEventTitle').textContent = 'Tambah Event';
     document.getElementById('eventId').value = '';
@@ -497,6 +1223,7 @@ function tambahEvent() {
     document.getElementById('eventTempat').value = '';
     document.getElementById('eventPic').value = '';
     document.getElementById('btnDeleteEvent').style.display = 'none';
+    updateDropdowns();
     document.getElementById('eventModal').classList.add('active');
 }
 
@@ -505,7 +1232,6 @@ function tambahEventTanggal(tanggal) {
     document.getElementById('eventTanggal').value = tanggal;
 }
 
-// ===== EDIT EVENT =====
 function editEvent(id) {
     const event = eventData.find(e => e.id === id);
     if (!event) return;
@@ -519,20 +1245,20 @@ function editEvent(id) {
     document.getElementById('eventTempat').value = event.tempat;
     document.getElementById('eventPic').value = event.pic;
     document.getElementById('btnDeleteEvent').style.display = 'inline-block';
+    updateDropdowns();
     document.getElementById('eventModal').classList.add('active');
 }
 
-// ===== SAVE EVENT =====
 function saveEvent(e) {
     e.preventDefault();
 
     const id = document.getElementById('eventId').value;
     const tanggal = parseInt(document.getElementById('eventTanggal').value);
     const nama = document.getElementById('eventNama').value.trim();
-    const waktu = document.getElementById('eventWaktu').value.trim();
-    const ruangan = document.getElementById('eventRuangan').value.trim();
-    const tempat = document.getElementById('eventTempat').value.trim();
-    const pic = document.getElementById('eventPic').value.trim();
+    const waktu = document.getElementById('eventWaktu').value;
+    const ruangan = document.getElementById('eventRuangan').value;
+    const tempat = document.getElementById('eventTempat').value;
+    const pic = document.getElementById('eventPic').value;
 
     if (!nama || !tanggal) {
         alert('⚠️ Nama dan Tanggal wajib diisi!');
@@ -556,7 +1282,6 @@ function saveEvent(e) {
     simpanSemuaData();
 }
 
-// ===== HAPUS EVENT =====
 function hapusEvent() {
     const id = document.getElementById('eventId').value;
     if (!id) return;
@@ -735,30 +1460,22 @@ function renderCapaianTable() {
 }
 
 // ============================================
+// UPDATE STATS
+// ============================================
+function updateStats() {
+    document.getElementById('totalKunjungan').textContent = kunjunganData.length;
+    document.getElementById('totalRuang').textContent = ruangData.length;
+    document.getElementById('totalBalai').textContent = balaiData.length;
+    document.getElementById('totalProgram').textContent = programData.length;
+}
+
+// ============================================
 // UPDATE ALL CHARTS
 // ============================================
 function updateAllCharts() {
     initBarChart(currentPeriod || 'monthly');
     initBarChartFull(currentPeriodFull || 'monthly');
     initBarChartLaporan(currentLaporanPeriod || 'monthly');
-}
-
-// ============================================
-// STATISTIK
-// ============================================
-function updateStats() {
-    document.getElementById('totalKegiatan').textContent = jadwalData.length;
-    const picSet = new Set(jadwalData.map(item => item.pic));
-    document.getElementById('totalPic').textContent = picSet.size;
-    const bulanIni = new Date().getMonth();
-    const bulanNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-    const dataBulanIni = capaianData.find(d => d.bulan === bulanNames[bulanIni]);
-    document.getElementById('totalPengunjung').textContent = dataBulanIni ? dataBulanIni.jumlah : 0;
-
-    const now = new Date();
-    document.getElementById('hariIni').textContent = now.toLocaleDateString('id-ID', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
 }
 
 // ============================================
@@ -928,11 +1645,10 @@ function toggleDateRange() {
 function generateLaporan() {
     const jenis = document.getElementById('laporanJenis').value;
 
-    document.getElementById('lapTotalKegiatan').textContent = jadwalData.length;
-    const picSet = new Set(jadwalData.map(item => item.pic));
-    document.getElementById('lapTotalPic').textContent = picSet.size;
-    const totalPengunjung = capaianData.reduce((sum, d) => sum + d.jumlah, 0);
-    document.getElementById('lapTotalPengunjung').textContent = totalPengunjung;
+    document.getElementById('lapTotalKunjungan').textContent = kunjunganData.length;
+    document.getElementById('lapTotalRuang').textContent = ruangData.length;
+    document.getElementById('lapTotalBalai').textContent = balaiData.length;
+    document.getElementById('lapTotalProgram').textContent = programData.length;
 
     const now = new Date();
     document.getElementById('lapPeriode').textContent = now.toLocaleDateString('id-ID', {
@@ -950,7 +1666,8 @@ function generateLaporan() {
     initBarChartLaporan(currentLaporanPeriod);
     initPieChartLaporan();
 
-    document.getElementById('lapJumlahData').textContent = `${jadwalData.length} Data`;
+    const totalData = kunjunganData.length + ruangData.length + balaiData.length + programData.length;
+    document.getElementById('lapJumlahData').textContent = `${totalData} Data`;
 }
 
 function renderLaporanTable(jenis) {
@@ -960,27 +1677,72 @@ function renderLaporanTable(jenis) {
     let headers = [];
     let rows = [];
 
-    if (jenis === 'all' || jenis === 'jadwal') {
-        headers = ['No', 'Kegiatan', 'Waktu', 'Ruangan', 'Tempat', 'PIC'];
-        rows = jadwalData.map((item, index) => ({
+    if (jenis === 'all' || jenis === 'kunjungan') {
+        headers = ['No', 'Jenis', 'Nama Tamu', 'Instansi', 'Tanggal', 'Waktu', 'Tujuan', 'PIC'];
+        rows = kunjunganData.map((item, index) => ({
             no: index + 1,
-            kegiatan: item.kegiatan,
+            jenis: '📋 Kunjungan',
+            nama: item.nama,
+            instansi: item.instansi,
+            tanggal: item.tanggal,
             waktu: item.waktu,
-            ruangan: item.ruangan,
-            tempat: item.tempat,
+            tujuan: item.tujuan,
             pic: item.pic
         }));
-    } else if (jenis === 'capaian') {
+    }
+
+    if (jenis === 'all' || jenis === 'ruang') {
+        rows = rows.concat(ruangData.map((item, index) => ({
+            no: rows.length + index + 1,
+            jenis: '🏢 Ruang',
+            nama: item.kegiatan,
+            instansi: item.ruangan,
+            tanggal: item.tanggal,
+            waktu: item.waktu,
+            tujuan: `${item.kapasitas} orang`,
+            pic: item.pic
+        })));
+    }
+
+    if (jenis === 'all' || jenis === 'balai') {
+        rows = rows.concat(balaiData.map((item, index) => ({
+            no: rows.length + index + 1,
+            jenis: '🏛️ Balai',
+            nama: item.kegiatan,
+            instansi: item.jenis,
+            tanggal: item.tanggal,
+            waktu: item.waktu,
+            tujuan: item.ruangan,
+            pic: item.pic
+        })));
+    }
+
+    if (jenis === 'all' || jenis === 'program') {
+        rows = rows.concat(programData.map((item, index) => ({
+            no: rows.length + index + 1,
+            jenis: '📊 Program',
+            nama: item.program,
+            instansi: item.kegiatan,
+            tanggal: item.tanggal,
+            waktu: item.waktu,
+            tujuan: item.lokasi,
+            pic: item.pic
+        })));
+    }
+
+    if (jenis === 'capaian') {
         headers = ['No', 'Bulan', 'Jumlah', 'Target', 'Pencapaian', 'Status'];
         rows = capaianData.map((item, index) => ({
             no: index + 1,
             bulan: item.bulan,
-            pengunjung: item.jumlah,
+            jumlah: item.jumlah,
             target: item.target,
             pencapaian: `${Math.round((item.jumlah / item.target) * 100)}%`,
             status: item.jumlah >= item.target ? '✅ Tercapai' : '⚠️ Belum'
         }));
-    } else if (jenis === 'kalender') {
+    }
+
+    if (jenis === 'kalender') {
         headers = ['No', 'Tanggal', 'Kegiatan', 'Waktu', 'Ruangan', 'Tempat', 'PIC'];
         rows = eventData.map((item, index) => ({
             no: index + 1,
@@ -993,15 +1755,15 @@ function renderLaporanTable(jenis) {
         }));
     }
 
+    if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:#888;padding:40px;">📂 Tidak ada data</td></tr>`;
+        return;
+    }
+
     let headerHtml = '<tr>';
     headers.forEach(h => { headerHtml += `<th>${h}</th>`; });
     headerHtml += '</tr>';
     thead.innerHTML = headerHtml;
-
-    if (rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center;color:#888;padding:40px;">📂 Tidak ada data</td></tr>`;
-        return;
-    }
 
     let bodyHtml = '';
     rows.forEach(row => {
@@ -1145,11 +1907,7 @@ function setCurrentDate() {
 // ============================================
 function resetAllData() {
     if (confirm('⚠️ Yakin ingin menghapus SEMUA data? Ini tidak bisa dibatalkan!')) {
-        localStorage.removeItem('jadwalData');
-        localStorage.removeItem('eventData');
-        localStorage.removeItem('capaianData');
-        localStorage.removeItem('nextEventId');
-        localStorage.removeItem('nextJadwalId');
+        localStorage.clear();
         location.reload();
     }
 }
@@ -1160,14 +1918,20 @@ function resetAllData() {
 document.addEventListener('DOMContentLoaded', function() {
     muatSemuaData();
 
-    renderJadwal();
-    renderJadwalFull();
+    renderKunjunganTable();
+    renderRuangTable();
+    renderBalaiTable();
+    renderProgramTable();
+    renderRingkasanJadwal();
     renderCalendar(currentMonth, currentYear);
     renderCalendarFull(currentMonthFull, currentYearFull);
     renderDashboardEvents();
     updateStats();
     setCurrentDate();
     renderCapaianTable();
+    updateDropdowns();
+
+    sinkronkanJadwalKeKalender();
 
     initBarChart('monthly');
     initPieChart();
@@ -1184,9 +1948,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     console.log('✅ Data berhasil dimuat dari localStorage!');
-    console.log('📋 Jadwal:', jadwalData.length, 'data');
+    console.log('📋 Kunjungan:', kunjunganData.length, 'data');
+    console.log('🏢 Ruang:', ruangData.length, 'data');
+    console.log('🏛️ Balai:', balaiData.length, 'data');
+    console.log('📊 Program:', programData.length, 'data');
     console.log('📅 Event:', eventData.length, 'data');
     console.log('📊 Capaian:', capaianData.length, 'data');
+    console.log('📋 Master Ruangan:', masterRuangan.length, 'data');
+    console.log('📋 Master Tempat:', masterTempat.length, 'data');
+    console.log('📋 Master PIC:', masterPic.length, 'data');
+    console.log('📋 Master Instansi:', masterInstansi.length, 'data');
 });
 
 console.log('💡 Untuk mereset semua data, ketik: resetAllData()');
